@@ -8,10 +8,17 @@
 #' @importFrom psych corr.test
 #' @importFrom psych describe
 #' @importFrom knitr kable
+#' @importFrom kableExtra footnote
+#' @importFrom kableExtra column_spec
+#' @importFrom kableExtra kable_classic_2
+#' @importFrom kableExtra kable_styling
+#' @importFrom kableExtra kable_paper
 #' @importFrom dplyr "%>%"
 
 
 coRtable<- function(dataset) { # input is a dataset (x) that includes a grouping variable (group)
+
+  x <- dataset
 
   rbg <- psych::corr.test(x)$r
   pbg <- psych::corr.test(x)$p

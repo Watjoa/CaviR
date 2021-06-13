@@ -2,6 +2,11 @@
 
 export(coRtable)
 importFrom(dplyr,"%>%")
+importFrom(kableExtra,column_spec)
+importFrom(kableExtra,footnote)
+importFrom(kableExtra,kable_classic_2)
+importFrom(kableExtra,kable_paper)
+importFrom(kableExtra,kable_styling)
 importFrom(knitr,kable)
 importFrom(psych,corr.test)
 importFrom(psych,describe)

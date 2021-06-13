@@ -59,7 +59,7 @@ devtools::install_github("Watjoa/CaviR")
 
 First, load the package.
 ```{r, include = FALSE, eval = FALSE}
-install.packages("CaviR")
+devtools::install_github("Watjoa/CaviR")
 ```
 
 ```{r, message=FALSE, warning=FALSE}
