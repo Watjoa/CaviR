@@ -1,16 +1,17 @@
 #' @title coRtable
 #'
-#' @description This function plots a correlation table in APA style with descriptives.
+#' @description This function plots a correlation table in APA style with descriptive statistics.
 #'
-#' @param dat Your dataset with the variable in order you want to present them
+#' @param dataset Your dataset with the variable in order you want to present them
 #' @return A html correlation matrix with significance stars, Note and descriptive statistics
 #' @export
 #' @importFrom psych corr.test
 #' @importFrom psych describe
-#' @importFrom kable kable
+#' @importFrom knitr kable
+#' @importFrom dplyr "%>%"
 
 
-coRtable<- function(x) { # input is a dataset (x) that includes a grouping variable (group)
+coRtable<- function(dataset) { # input is a dataset (x) that includes a grouping variable (group)
 
   rbg <- psych::corr.test(x)$r
   pbg <- psych::corr.test(x)$p

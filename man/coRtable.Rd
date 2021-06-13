@@ -4,14 +4,14 @@
 \alias{coRtable}
 \title{coRtable}
 \usage{
-coRtable(x)
+coRtable(dataset)
 }
 \arguments{
-\item{dat}{Your dataset with the variable in order you want to present them}
+\item{dataset}{Your dataset with the variable in order you want to present them}
 }
 \value{
 A html correlation matrix with significance stars, Note and descriptive statistics
 }
 \description{
-This function plots a correlation table in APA style with descriptives.
+This function plots a correlation table in APA style with descriptive statistics.
 }

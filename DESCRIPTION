@@ -14,8 +14,9 @@ BugReports: https://github.com/Watjoa/CaviR/issues
 Depends: 
     R (>= 3.5.0)
 Imports:
-    kable (>= 1.0.0)
-    psych (>= 1.0.0)
+    knitr (>= 1.31),
+    psych (>= 2.1.3),
+    dplyr (>= 1.0.6)
 VignetteBuilder: knitr
 Encoding: UTF-8
 Language: en-US
