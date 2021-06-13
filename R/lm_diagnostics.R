@@ -21,6 +21,7 @@
 #' @importFrom ggplot2 scale_size_continuous
 #' @importFrom ggplot2 geom_abline
 #' @importFrom ggplot2 geom_density
+#' @importFrom ggplot2 stat_function
 #' @importFrom ggplot2 labs
 #' @importFrom car vif
 #' @importFrom cowplot plot_grid
