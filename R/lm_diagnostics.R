@@ -9,7 +9,7 @@
 #' @importFrom car vif
 #' @importFrom cowplot plot_grid
 
-lm.diagnostics<- function(model) {
+lm.diagnostics <- function(model) {
 
   # Multicollinearity
   vif <- as.data.frame(car::vif(model))
@@ -91,3 +91,4 @@ lm.diagnostics<- function(model) {
   return(plot)
 
 }
+
