@@ -43,7 +43,7 @@ navbar:
     #   href: https://github.com/rstudio/cheatsheets/raw/master/overviewR.pdf
     github:
       icon: fab fa-github fa-lg
-      href: https://github.com/cosimameyer/overviewR/
+      href: https://github.com/Watjoa/CaviR/
     # tabular:
     #   icon: fa-table
     #   text: Tabular overview
