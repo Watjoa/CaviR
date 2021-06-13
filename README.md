@@ -66,6 +66,60 @@ Then, just run the `coRtable` function
 coRtable(subset)
 ```
 
+### `lm.diagnostics`
+
+To generate an overview of all important diagnostics for a linear model,
+`coRtable` can be used.
+
+**Model assumptions: **
+
+1.  **Linearity**: is my model linear?
+
+-   *Check?*: (1) is the point cloud at random and (2) is the blue line
+    in plot 2 similar to the horizontal line in *plot 2*?  
+-   *Violation?*: consider another relationship (e.g. cubric,
+    curvilinear)
+
+2.  **Normality**: is the distribution of my parameters / residuals
+    normal?
+
+-   *Check?*: do I have a Q-Q plot in *plot 3* where all datapoints are
+    as close too the diagonal? Is the distribution as similar as
+    possible to the normal distribution in *plot 8*?  
+-   *Violation?*: consider transformations of your parameters or check
+    which variable is necessary to add to the model
+
+3.  **Homoscedasticity**: is the spread of my data across levels of my
+    predictor the same?
+
+-   *Check?*: (1) is the point cloud at random and (2) is the blue line
+    in plot 2 similar to the horizontal line in *plot 2*? (3) Is there a
+    pattern in *plot 4*?  
+-   *Violation?*: in case of heteroscedasticity, you will have
+    inconsistency in calculation of standard errors and parameter
+    estimation in the model. This results in biased confidence intervals
+    and significance tests.
+
+4.  **Independence**: are the errors in my model related to each other?
+
+5.  **Influential outliers**: are there outliers influential to my
+    model?
+
+-   *Check?*: is the blue line in *plot 7* curved?  
+-   *Violation?*: this could be problematic for estimating parameters
+    (e.g. mean) and sum of squared and biased results.
+
+``` r
+data$dummy1_group <- as.numeric(scale(data$Condition,scale=TRUE))
+data$moderator1   <- as.numeric(scale(data$Indecisiveness,scale=TRUE))
+
+model <- lm(outcome ~ dummy1_group*moderator1 + age + gender, data=data)
+
+lm.diagnostics(model)
+```
+
+<img src="man/figures/unnamed-chunk-10-1.png" width="100%" />
+
 <!-- ## </a><i class="fas fa-table"></i> Why did we build it? -->
 <!-- If you have a (large) data set that has many different observations over a long period, it becomes increasingly **difficult to identify for each unique observation its exact coverage in the data**. In particular, if some observations are not included for the entire time span of the data – either because they entered later, dropped out earlier or have gaps in between – it can become difficult to spot potential problems in your data’s time and scope. -->
 <!-- overviewR allows you to **quickly get a glimpse of your data and the distribution of your observations over time**. With its ability to **produce both data.frame objects and LaTeX/.tex outputs**, it can be used by **practitioners and academics alike**. -->

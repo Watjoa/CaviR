@@ -153,6 +153,65 @@
 <p>Then, just run the <code>coRtable</code> function</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/coRtable.html">coRtable</a></span><span class="op">(</span><span class="va">subset</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="lmdiagnostics" class="section level3">
+<h3 class="hasAnchor">
+<a href="#lmdiagnostics" class="anchor"></a><code>lm.diagnostics</code>
+</h3>
+<p>To generate an overview of all important diagnostics for a linear model, <code>coRtable</code> can be used.</p>
+<p><strong>Model assumptions: </strong></p>
+<ol>
+<li>
+<strong>Linearity</strong>: is my model linear?</li>
+</ol>
+<ul>
+<li>
+<em>Check?</em>: (1) is the point cloud at random and (2) is the blue line in plot 2 similar to the horizontal line in <em>plot 2</em>?<br>
+</li>
+<li>
+<em>Violation?</em>: consider another relationship (e.g. cubric, curvilinear)</li>
+</ul>
+<ol>
+<li>
+<strong>Normality</strong>: is the distribution of my parameters / residuals normal?</li>
+</ol>
+<ul>
+<li>
+<em>Check?</em>: do I have a Q-Q plot in <em>plot 3</em> where all datapoints are as close too the diagonal? Is the distribution as similar as possible to the normal distribution in <em>plot 8</em>?<br>
+</li>
+<li>
+<em>Violation?</em>: consider transformations of your parameters or check which variable is necessary to add to the model</li>
+</ul>
+<ol>
+<li>
+<strong>Homoscedasticity</strong>: is the spread of my data across levels of my predictor the same?</li>
+</ol>
+<ul>
+<li>
+<em>Check?</em>: (1) is the point cloud at random and (2) is the blue line in plot 2 similar to the horizontal line in <em>plot 2</em>? (3) Is there a pattern in <em>plot 4</em>?<br>
+</li>
+<li>
+<em>Violation?</em>: in case of heteroscedasticity, you will have inconsistency in calculation of standard errors and parameter estimation in the model. This results in biased confidence intervals and significance tests.</li>
+</ul>
+<ol>
+<li><p><strong>Independence</strong>: are the errors in my model related to each other?</p></li>
+<li><p><strong>Influential outliers</strong>: are there outliers influential to my model?</p></li>
+</ol>
+<ul>
+<li>
+<em>Check?</em>: is the blue line in <em>plot 7</em> curved?<br>
+</li>
+<li>
+<em>Violation?</em>: this could be problematic for estimating parameters (e.g. mean) and sum of squared and biased results.</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span><span class="op">$</span><span class="va">dummy1_group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Condition</span>,scale<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+<span class="va">data</span><span class="op">$</span><span class="va">moderator1</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Indecisiveness</span>,scale<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">outcome</span> <span class="op">~</span> <span class="va">dummy1_group</span><span class="op">*</span><span class="va">moderator1</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">gender</span>, data<span class="op">=</span><span class="va">data</span><span class="op">)</span>
+
+<span class="fu"><a href="reference/lm.diagnostics.html">lm.diagnostics</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/unnamed-chunk-10-1.png" width="100%"></p>
 <!-- ## </a><i class="fas fa-table"></i> Why did we build it? -->
 <!-- If you have a (large) data set that has many different observations over a long period, it becomes increasingly **difficult to identify for each unique observation its exact coverage in the data**. In particular, if some observations are not included for the entire time span of the data – either because they entered later, dropped out earlier or have gaps in between – it can become difficult to spot potential problems in your data’s time and scope. -->
 <!-- overviewR allows you to **quickly get a glimpse of your data and the distribution of your observations over time**. With its ability to **produce both data.frame objects and LaTeX/.tex outputs**, it can be used by **practitioners and academics alike**. -->

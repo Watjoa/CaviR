@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • CaviR</title>
+<title>coRtable — lm.diagnostics • CaviR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,8 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="coRtable — lm.diagnostics" />
+<meta property="og:description" content="This function plots a correlation table in APA style with descriptive statistics." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -66,7 +67,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -156,27 +157,36 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/Watjoa/CaviR/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>coRtable</h1>
+    <small class="dont-index">Source: <a href='https://github.com/Watjoa/CaviR/blob/master/R/lm_diagnostics.R'><code>R/lm_diagnostics.R</code></a></small>
+    <div class="hidden name"><code>lm.diagnostics.Rd</code></div>
     </div>
 
-    <div id="cavir-01" class="section level1">
-<h1 class="page-header" data-toc-text="0.1">
-<a href="#cavir-01" class="anchor"></a>CaviR 0.1</h1>
-<ul>
-<li><p>Package is created</p></li>
-<li><p>function <code>coRtable</code> is added including a correlation matrix with significance stars in APA style</p></li>
-<li><p>function <code>lm.diagnostics</code> is added including an overview of all the most important diagnostics for a linear model</p></li>
-</ul>
-</div>
-  </div>
+    <div class="ref-description">
+    <p>This function plots a correlation table in APA style with descriptive statistics.</p>
+    </div>
 
+    <pre class="usage"><span class='fu'>lm.diagnostics</span><span class='op'>(</span><span class='va'>model</span><span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>dataset</th>
+      <td><p>Your dataset with the variable in order you want to present them</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A html correlation matrix with significance stars, Note and descriptive statistics</p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
 
 

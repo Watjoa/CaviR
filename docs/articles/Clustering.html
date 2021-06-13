@@ -162,9 +162,10 @@ div.yellow { background-color:#09bb9f; color: white; border-radius: 5px; padding
 <a href="#internal-consistency" class="anchor"></a>Internal consistency</h2>
 <p>Check overview of internal consistencies (see blog <em>‘Internal consistencies’</em>)</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://strengejacke.github.io/sjPlot/">sjPlot</a></span><span class="op">)</span>
-
-<span class="fu"><a href="https://strengejacke.github.io/sjPlot/reference/tab_itemscale.html">sjt.itemanalysis</a></span><span class="op">(</span><span class="va">df</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">keys.list</span><span class="op">$</span><span class="va">auto_mot</span><span class="op">)</span><span class="op">]</span>, 
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://strengejacke.github.io/sjPlot/">sjPlot</a></span><span class="op">)</span></code></pre></div>
+<pre><code>## Install package "strengejacke" from GitHub (`devtools::install_github("strengejacke/strengejacke")`) to load all sj-packages at once!</code></pre>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://strengejacke.github.io/sjPlot/reference/tab_itemscale.html">sjt.itemanalysis</a></span><span class="op">(</span><span class="va">df</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">keys.list</span><span class="op">$</span><span class="va">auto_mot</span><span class="op">)</span><span class="op">]</span>, 
                  factor.groups.titles <span class="op">=</span> <span class="st">"Autonomous motivation"</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <caption style="font-weight: bold; text-align:left;">
@@ -622,7 +623,7 @@ Mean inter-item-correlation=0.258 · Cronbach’s α=0.843
 <div id="outliers" class="section level2">
 <h2 class="hasAnchor">
 <a href="#outliers" class="anchor"></a>Outliers</h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">Routliers</span><span class="op">)</span>
 
 <span class="co"># select variables from dataset</span>
@@ -639,7 +640,7 @@ Mean inter-item-correlation=0.258 · Cronbach’s α=0.843
                   x <span class="op">=</span> <span class="va">df</span><span class="op">$</span><span class="va">auto_mot</span>,
                   pos_display <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p><img src="Clustering_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># bivariate outliers (example: auto_mot and control_mot)</span>
 <span class="va">outliers.aumcom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Routliers/man/outliers_mahalanobis.html">outliers_mahalanobis</a></span><span class="op">(</span>
                    <span class="va">df</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'auto_mot'</span>,<span class="st">'control_mot'</span><span class="op">)</span><span class="op">]</span>, 
@@ -651,7 +652,7 @@ Mean inter-item-correlation=0.258 · Cronbach’s α=0.843
                           pos_display <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <pre><code>## `geom_smooth()` using formula 'y ~ x'</code></pre>
 <p><img src="Clustering_files/figure-html/unnamed-chunk-3-2.png" width="700"></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Define outliers in dataset:</span>
 
 <span class="co">## 1. make new variable ’outliers’ with levels ’No’ </span>
@@ -669,7 +670,7 @@ Mean inter-item-correlation=0.258 · Cronbach’s α=0.843
 <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/proportions.html">prop.table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">outliers</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,<span class="fl">2</span><span class="op">)</span> </code></pre></div>
 <pre><code>##   No  Yes 
 ## 0.99 0.01</code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Make dataset without detected outliers</span>
 <span class="va">dfwithout</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">outliers</span> <span class="op">==</span> <span class="st">"No"</span><span class="op">)</span>, <span class="op">]</span>
 
@@ -679,7 +680,7 @@ Mean inter-item-correlation=0.258 · Cronbach’s α=0.843
 <div id="descriptives" class="section level2">
 <h2 class="hasAnchor">
 <a href="#descriptives" class="anchor"></a>Descriptives</h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">describe</span><span class="op">(</span><span class="va">dfwithout</span><span class="op">)</span></code></pre></div>
 <pre><code>##             vars    n mean   sd median trimmed  mad  min  max range  skew
 ## auto_mot       1 1067 4.08 0.48   4.06    4.09 0.46 2.69 5.00  2.31 -0.16
@@ -689,14 +690,14 @@ Mean inter-item-correlation=0.258 · Cronbach’s α=0.843
 ## auto_mot       -0.31 0.01
 ## control_mot    -0.28 0.02
 ## amot           -0.12 0.03</code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## Attaching package: 'ggplot2'</code></pre>
 <pre><code>## The following objects are masked from 'package:psych':
 ## 
 ##     %+%, alpha</code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rpkgs.datanovia.com/ggpubr/">ggpubr</a></span><span class="op">)</span></code></pre></div>
 <pre><code>## Registered S3 methods overwritten by 'car':
 ##   method                          from
@@ -704,14 +705,14 @@ Mean inter-item-correlation=0.258 · Cronbach’s α=0.843
 ##   cooks.distance.influence.merMod lme4
 ##   dfbeta.influence.merMod         lme4
 ##   dfbetas.influence.merMod        lme4</code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rpkgs.datanovia.com/ggpubr/reference/ggdensity.html">ggdensity</a></span><span class="op">(</span><span class="va">dfwithout</span>,
           x <span class="op">=</span> <span class="st">"auto_mot"</span>, fill <span class="op">=</span> <span class="st">"#2F3C4D"</span>, title <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span>
           <span class="fu"><a href="https://rpkgs.datanovia.com/ggpubr/reference/stat_overlay_normal_density.html">stat_overlay_normal_density</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"red"</span>, 
                               linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span> <span class="op">+</span> 
           <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">'Scores for autonomous motivation'</span><span class="op">)</span></code></pre></div>
 <p><img src="Clustering_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/braverock/PerformanceAnalytics">"PerformanceAnalytics"</a></span><span class="op">)</span></code></pre></div>
 <pre><code>## Loading required package: xts</code></pre>
 <pre><code>## Loading required package: zoo</code></pre>
@@ -725,7 +726,7 @@ Mean inter-item-correlation=0.258 · Cronbach’s α=0.843
 <pre><code>## The following object is masked from 'package:graphics':
 ## 
 ##     legend</code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/PerformanceAnalytics/man/chart.Correlation.html">chart.Correlation</a></span><span class="op">(</span><span class="va">dfwithout</span>, histogram<span class="op">=</span><span class="cn">TRUE</span>, pch<span class="op">=</span><span class="fl">19</span><span class="op">)</span></code></pre></div>
 <p><img src="Clustering_files/figure-html/unnamed-chunk-4-2.png" width="700"></p>
 </div>
@@ -733,7 +734,7 @@ Mean inter-item-correlation=0.258 · Cronbach’s α=0.843
 <h2 class="hasAnchor">
 <a href="#standardization" class="anchor"></a>Standardization</h2>
 <p>By standardization, the mean and the variances of the study variables are comparable by which they can be treated with equal importance in the cluster analysis.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap">ComplexHeatmap</a></span><span class="op">)</span></code></pre></div>
 <pre><code>## Loading required package: grid</code></pre>
 <pre><code>## ========================================
@@ -752,10 +753,10 @@ Mean inter-item-correlation=0.258 · Cronbach’s α=0.843
 ## This message can be suppressed by:
 ##   suppressPackageStartupMessages(library(ComplexHeatmap))
 ## ========================================</code></pre>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/densityHeatmap.html">densityHeatmap</a></span><span class="op">(</span><span class="va">dfwithout</span>, title<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></code></pre></div>
 <p><img src="Clustering_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># scale the dataframe</span>
 <span class="va">dfwithout.sc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span><span class="op">(</span><span class="va">dfwithout</span>,scale<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>
 <span class="co"># as it is saved as a matrix, convert to data frame</span>

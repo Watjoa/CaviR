@@ -46,7 +46,7 @@ Here, we build the linear model and check the summary.
 
 ```{r, message=FALSE}
 model <- lm(outcome ~ dummy1_group*moderator1 + age + gender, data=data)
-lm.diagnostics(model)
+
 library(jtools)
 summ(model, confint = TRUE, vifs = TRUE, digits=3, pvals=TRUE)
 ```
