@@ -1,0 +1,14 @@
+---
+title: "Applications"
+description: >
+  Discover all online applications that are available
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Applications}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# <i class="far fa-chart-pie"></i> [General application](https://watjoa.shinyapps.io/CaviR/)
+
+# <i class="far fa-chart-line"></i> [Regression modelling](https://watjoa.shinyapps.io/CaviRmodels/)

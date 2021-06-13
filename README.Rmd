@@ -65,7 +65,7 @@ devtools::install_github("Watjoa/CaviR")
 library(CaviR) 
 ```
 
-```{r, include = FALSE, eval = TRUE}
+```{r, include = FALSE, eval = FALSE}
 
 data  <- foreign::read.spss("(2)Data Joachim.sav", 
                   use.value.labels = FALSE, 
@@ -82,19 +82,19 @@ data$age <- data$Leeftijd
 
 To generate a correlation table with significance stars and descriptive statistics, ```coRtable``` can be used. First, make a subset of the columns in the order you want them to be displayed in the correlation table.
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
 subset <- data[,c("Extra", "Agree", "Con", "Neur", "Open")]
 ```
 
 Possibly, you can change the names of the variables by using `colnames()`
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
 colnames(subset) <- c('Extraversion','Agreeableness','Conscientiousness', 'Neuroticism', 'Openness')
 ```
 
 Then, just run the `coRtable` function
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
 coRtable(subset)
 ```
 

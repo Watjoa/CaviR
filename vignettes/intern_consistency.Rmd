@@ -1,0 +1,261 @@
+---
+title: "Internal consistency"
+description: |
+  Check the internal consistency and validation of scale scores
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Internal consistency}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<style type="text/css">
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+div.orange { background-color:#ffa366; border-radius: 5px; padding: 20px;}
+div.yellow { background-color:#09bb9f; color: white; border-radius: 5px; padding: 20px;}
+</style>
+
+# Scale scores and reliability 
+
+## Scale scores
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+
+data <- foreign::read.spss("SAQ_ouders_DATA_alleouderssamen.sav", 
+                  use.value.labels = FALSE, 
+                  to.data.frame=TRUE)
+
+data <- data[,c('s1as_a','s1ch_b','s1str_v','s1con_d','s2ch_a','s2as_p','s2con_e','s2str1_v','s2as_a','s2str2_v','s3con_d',
+               's3as1_a','s3ch_b','s3as_p','s3con_e','s3str_v','s3ch_a','s3as2_a','s4str_v','s4con_d','s4ch_b','s4as_a','s4con_e','s5ch_b',
+               's5as_a','s5con_d','s5ch_a','s5str_v','s5con_e','s6as1_a','s6ch_a','s6con1_e','s6as_p','s6str_v','s6con2_e','s6str_b',
+               's6as2_a','s7str_v','s7as_a','s7ch_a','s7con_d','s8as_p','s8ch_b','s8str_v','s8con_d','s8as_a','s9con_d','s9ch_b','s9as_a',
+               's9con_e','s9str_v','s10str_b','s10as_a','s10con_d','s10ch_a','s11str1_b','s11ch_b','s11str2_b','s11as1_a','s11con_e',
+               's11as2_a','s12con_e','s12ch_b','s12str_v','s12as_a','s12con_d','s13as_a','s13ch1_b','s13con_e','s13as_p','s13str_b',
+               's13ch2_b','s13con_d','s14ch_a','s14con_d','s14str_b','s14as_a','s15as_p','s15ch_a','s15con_e','s15str_b','s16con1_e',
+               's16ch_b','s16as1_a','s16con_d','s16str_b','s16as2_a','s16con2_e','s17str_v','s17as_p','s17ch_a','s17con_e','s18ch_b',
+               's18as_a','s18str_b','s18con_d')]
+colnames(data) <- c("item1",
+"item2",
+"item3",
+"item4",
+"item5",
+"item6",
+"item7",
+"item8",
+"item9",
+"item10",
+"item11",
+"item12",
+"item13",
+"item14",
+"item15",
+"item16",
+"item17",
+"item18",
+"item19",
+"item20",
+"item21",
+"item22",
+"item23",
+"item24",
+"item25",
+"item26",
+"item27",
+"item28",
+"item29",
+"item30",
+"item31",
+"item32",
+"item33",
+"item34",
+"item35",
+"item36",
+"item37",
+"item38",
+"item39",
+"item40",
+"item41",
+"item42",
+"item43",
+"item44",
+"item45",
+"item46",
+"item47",
+"item48",
+"item49",
+"item50",
+"item51",
+"item52",
+"item53",
+"item54",
+"item55",
+"item56",
+"item57",
+"item58",
+"item59",
+"item60",
+"item61",
+"item62",
+"item63",
+"item64",
+"item65",
+"item66",
+"item67",
+"item68",
+"item69",
+"item70",
+"item71",
+"item72",
+"item73",
+"item74",
+"item75",
+"item76",
+"item77",
+"item78",
+"item79",
+"item80",
+"item81",
+"item82",
+"item83",
+"item84",
+"item85",
+"item86",
+"item87",
+"item88",
+"item89",
+"item90",
+"item91",
+"item92",
+"item93",
+"item94",
+"item95",
+"item96")
+
+data[1,'item4'] <- NA
+data[1,'item5'] <- NA
+data[1,'item11'] <- NA
+
+library(sjPlot)
+```
+
+In R, there is the possibility to calculate scale scores for all cases and multiple variables **with the same response scale** at the same time. Therefore, we need the package `psych`.  
+First, a list-object is made including all names of the variables (see `var1` and `var2`). Variables are separated by `,`. 
+Important, the minimum and maximum values for these items are the same and need to be described. So in case of having multiple variables calculated by different response scales, repeat this procedure for each type of response scale.
+
+Maybe, before starting, an items has to be recoded:
+
+```{r, eval=FALSE,message=FALSE, warning=FALSE}
+data$item.r <- as.factor(recode(data$item, '1'='5', '2'='4','3'='3','4'='2','5'='1'))
+```
+
+Also useful to do is to subtract the item by the largest possible item + 1. For instance, I need to recode data$item (ranging from 1 to 5), I do `6 - item`. By doing this, 5 becomes 1 and 1 becomes 5.
+
+Now, let's make our item - scale score list:
+
+```{r, message=FALSE, warning=FALSE}
+library(psych)
+
+# assign the items to the variable or scale score
+keys.list <- list(
+  var1 = c("item4","item7","item11","item15"),
+  var2 = c("item5","item6","item7","item8")
+) 
+
+keys <- make.keys(data,keys.list) 
+
+# describe the minimum and maximum values of the items
+scores <- scoreItems(keys,data,
+                       min=1,max=5,
+                       missing=TRUE) 
+
+# check the first 6 scale scores in your dataset
+head(scores$scores)
+```
+
+### Missing values 
+
+The first option is to impute the missing data based on the median of the variable. This is used as default.
+
+```{r, message=FALSE, warning=FALSE}
+scores <- scoreItems(keys,data,
+                       min=1,max=5,
+                       impute="median") 
+```
+
+The other option is to formulate specific variables as missing value `NA` when a specific number of items is not completed. 
+
+```{r, message=FALSE, warning=FALSE}
+Percentage <- 80 #if more than 80% of the items is missing, then the scale score becomes a missing values
+
+scores <- scoreItems(keys,data,
+                       min=1,max=5,
+                       impute="none") # no imputation is done here
+
+colnames(scores$missing) <- paste0('missing_', colnames(scores$missing))
+
+# calculate the percentage of missing values
+percNA <- as.data.frame((scores$missing/scores$n.items)*100)
+
+NAcells <- which(percNA > Percentage)
+
+scores$scores[NAcells] <- NA
+```
+
+Check the intercorrelations of the variables. 
+
+```{r, message=FALSE}
+# check intercorrelations
+summary(scores)
+```
+
+Check the descriptives of the calculated scales scores as an extra check.
+
+```{r, message=FALSE}
+# Check descriptives
+describe(scores$scores)
+```
+
+Assign them to the original dataset. 
+
+```{r, message=FALSE}
+# assign them to the original dataframe
+means <- as.data.frame(scores$scores)
+dataset <- cbind(data,means)
+```
+
+## Reliability
+
+The `sjt.itemanalysis` function of the `sjPlot` package provide some useful functions to check internal validation of variables. Following data are given:  
+
+<div class = "blue">
+
+- overview of items  
+- percentage of missing values  
+- standard deviation  
+- skewness: the higher, the skewer
+- item difficulty: should range between .20 and .80. Ideal value is `p+(1-p)/2` (mostly between .50 and .80)
+- item discrimination: acceptable cut-off of .20. The closer to 1, the better.
+- Cronbach's Alpha if item was removed from scale  
+- mean (or average) inter-item correlation: acceptable between .20 and .40
+- Cronbach's Alpha: acceptable cut-off of .70
+
+</div>
+
+
+
+```{r, message=FALSE}
+# extract variable from keys.list
+rel <- data[,c(keys.list$var1)]
+
+sjt.itemanalysis(rel)
+```
+
+
+
+
+
+
+
+
+
+

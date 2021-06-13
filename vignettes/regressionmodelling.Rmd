@@ -1,0 +1,289 @@
+---
+title: "Regression modelling"
+description: |
+  Building and visualising regression models with checks for diagnostics
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Regression modelling}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+data  <- foreign::read.spss("(2)Data Joachim.sav", 
+                  use.value.labels = FALSE, 
+                  to.data.frame=TRUE)
+data$dummy1_group <- as.numeric(data$Condition)
+data$outcome <- data$Pleasure_Interest
+data$moderator1 <- data$Indecisiveness
+data$moderator2 <- data$Open
+data$gender <- data$Geslacht
+data$age <- data$Leeftijd
+```             
+
+## Model building
+
+We start from a simple model including:
+
+- `dummy1_group` as a dummy coded group variable  
+- `moderator1` as a continuous moderator  
+- `*` to assign their interaction  
+- `age` and `gender` as covariates that are not interacting  
+
+We standardize the variables that we do include into our interactions. 
+Extra, we make sure their are numeric.
+
+```{r, message=FALSE}
+data$dummy1_group <- as.numeric(scale(data$Condition,scale=TRUE))
+data$moderator1   <- as.numeric(scale(data$Indecisiveness,scale=TRUE))
+
+# check if the means are zero
+summary(data[,c('dummy1_group','moderator1')])
+```
+
+Here, we build the linear model and check the summary.
+
+```{r, message=FALSE}
+model <- lm(outcome ~ dummy1_group*moderator1 + age + gender, data=data)
+
+library(jtools)
+summ(model, confint = TRUE, vifs = TRUE, digits=3, pvals=TRUE)
+```
+
+## Diagnostics
+
+At this point, we are able to build our model and to check our results. However, results might be biased or might be inaccurate by some violated assumptions of your model. To make sure your results can be interpeted, make sure you have checked your assumptions. In the following explanations and important considerations, we refer to the code of plotting the assumptions. 
+
+_* future plans: Next to the graphics, there are multiple test to check assumptions statistically and remedies to handle violated assumptions. This will be added in the future._
+
+**Model assumptions: **
+
+1. **Linearity**: is my model linear?
+  + *Check?*: (1) is the point cloud at random and (2) is the blue line in plot 2 similar to the horizontal line in *plot 2*?  
+  + *Violation?*: consider another relationship (e.g. cubric, curvilinear)
+  
+2. **Normality**: is the distribution of my parameters / residuals normal?
+  + *Check?*: do I have a Q-Q plot in *plot 3* where all datapoints are as close too the diagonal? Is the distribution as similar as possible to the normal distribution in *plot 8*?  
+  + *Violation?*: consider transformations of your parameters or check which variable is necessary to add to the model
+  
+3. **Homoscedasticity**: is the spread of my data across levels of my predictor the same?
+  + *Check?*: (1) is the point cloud at random and (2) is the blue line in plot 2 similar to the horizontal line in *plot 2*? (3) Is there a pattern in *plot 4*?  
+  + *Violation?*: in case of heteroscedasticity, you will have inconsistency in calculation of standard errors and parameter estimation in the model. This results in biased confidence intervals and significance tests.
+  
+4. **Independence**: are the errors in my model related to each other?
+  
+5. **Influential outliers**: are there outliers influential to my model?
+  + *Check?*: is the blue line in *plot 7* curved?  
+  + *Violation?*: this could be problematic for estimating parameters (e.g. mean) and sum of squared and biased results.
+  
+```{r, message=FALSE, fig.height=12}
+library(ggplot2)
+
+# Multicollinearity
+vif <- as.data.frame(car::vif(model))
+vif$variables <- rownames(vif)
+colnames(vif)<-c('vif','variables')
+      
+p <- ggplot(data=vif, aes(x=variables, y=vif)) +
+     geom_bar(stat="identity",fill='#2F3C4D')+theme_classic()+
+     geom_hline(yintercept=10,linetype = 'dashed',color='darkred')+
+     geom_text(data=data.frame(x=0,y=11), aes(x, y), label='  tolerable',hjust=0,color='darkred')+
+     geom_hline(yintercept=5,linetype = 'dashed',color='darkgreen')+
+     geom_text(data=data.frame(x=0,y=6), aes(x, y), label='  good',hjust=0,color='darkgreen')+
+     ggtitle("1. Multicollinearity")
+
+# Residuals vs Fitted Plot    
+p1 <- ggplot(model, aes(.fitted, .resid))+
+      geom_point()+ 
+      stat_smooth(method="loess")+
+      geom_hline(yintercept=0, col="red", linetype="dashed")+
+      xlab("Fitted values")+
+      ylab("Residuals")+
+      theme_bw()+
+      ggtitle("2. Residual vs Fitted Plot")
+
+# Normal Q-Q plot      
+p2 <- ggplot(model, aes(qqnorm(.stdresid)[[1]], .stdresid))+
+      geom_point(na.rm = TRUE)+
+      theme_bw()+
+      ggtitle("3. Normal Q-Q")
+
+# Scale Location     
+p3 <- ggplot(model, aes(.fitted, sqrt(abs(.stdresid))))+ 
+      geom_point(na.rm=TRUE)+
+      stat_smooth(method="loess", na.rm = TRUE)+
+      xlab("Fitted Value")+
+      ylab(expression(sqrt("|Standardized residuals|")))+
+      theme_bw()+
+      ggtitle('4. Scale-Location')
+
+# Cook's distance     
+p4 <- ggplot(model, aes(seq_along(.cooksd), .cooksd))+
+      geom_bar(stat="identity", position="identity")+
+      xlab("Obs. Number")+
+      ylab("Cook's distance")+
+      theme_bw()+
+      ggtitle("5. Cook's distance")
+      
+p5 <- ggplot(model, aes(.hat, .stdresid))+
+      geom_point(aes(size=.cooksd), na.rm=TRUE)+
+      stat_smooth(method="loess", na.rm=TRUE)+
+      xlab("Leverage")+
+      ylab("Standardized Residuals")+
+      scale_size_continuous("Cook's Distance", range=c(1,5))+
+      theme_bw()+
+      theme(legend.position="bottom")+
+      ggtitle("6. Residual vs Leverage Plot")
+      
+# Cook's distance versus Leverage
+p6 <- ggplot(model, aes(.hat, .cooksd))+
+      geom_point(na.rm=TRUE)+
+      stat_smooth(method="loess", na.rm=TRUE)+
+      xlab("Leverage hii")+
+      ylab("Cook's Distance")+
+      geom_abline(slope=seq(0,3,0.5), color="gray", linetype="dashed")+
+      theme_bw()+
+      ggtitle("7. Cook's dist vs Leverage hii/(1-hii)")
+
+# Residuals distribution      
+df <- as.data.frame(residuals(model))
+colnames(df) <- 'residuals'
+p7 <- ggplot(df, aes(x = residuals)) + 
+      geom_density(color="darkblue", fill="lightblue")+
+      stat_function(fun = dnorm, args = list(mean = mean(df$residuals), sd = sd(df$residuals)))+
+      labs(x='Residuals',y="Residuals")+
+      ggtitle("8. Distribution residuals")+
+      theme_bw() 
+    
+      
+library(cowplot) 
+plot_grid(p,p1,p2,p3,p4,p5,p6,p7, nrow = 4)
+      
+```
+
+## Visualisation
+
+In this part, you find the code of building a moderation plot. 
+
+### Plot
+
+First, we can extract the predicted values from our model for each level of our variables. These levels are calculated based on the mean and standard deviations for continuous variables and based on the levels for categorical variables.
+
+```{r, message=FALSE}
+library(ggeffects)
+modeloutput <- ggpredict(model,terms=c('dummy1_group','moderator1'))
+modeloutput$x <- as.factor(modeloutput$x)
+modeloutput
+```
+
+These vaues are used to build the moderation plot in the `ggplot2` package.
+
+First output:
+
+```{r, message=FALSE}
+library(reghelper)
+library(ggplot2)
+
+output <- as.data.frame(modeloutput)
+
+IE_plot1 <- ggplot(data = output, 
+                   aes(x = x, y = predicted, group=group, linetype=group)) +
+            geom_line(alpha=.2) +
+            geom_line(aes(x = x, y = predicted),size=1)+
+            theme_classic(base_size = 15)
+
+IE_plot1
+```
+
+Change both moderated labels and linetypes and the range of the y axis.
+
+```{r, message=FALSE}
+library(reghelper)
+library(ggplot2)
+
+IE_plot2 <- IE_plot1+
+
+            # set range of y axis
+            ylim(1,5)+
+              
+            # set titel of moderator legend
+            # set linetype
+            # change labels of moderator
+            scale_linetype_manual("Moderator",
+                                  values=c("solid", 'dashed',"dotted"),
+                                  labels= c("Low","Average","High"))+
+       
+            # make sure there are no two legends
+            guides(colour=FALSE)
+
+IE_plot2
+```
+
+Change all other labels.
+
+```{r, message=FALSE}
+IE_plot3 <- IE_plot2 + 
+  
+            # change labels on x axis
+            scale_x_discrete(name="Group", labels= c( 'Group 1', 'Group 2' ))+
+  
+            # change label of y axis and titles
+            labs(
+            title = "Main title",
+            subtitle = "Subtitle",
+            caption = "Extra information about the model",
+            y = 'Outcome')
+
+IE_plot3
+```
+
+
+### Simple slope analysis
+
+```{r, message=FALSE}
+library(interactions)
+sim_slopes(model, 
+           pred= dummy1_group, 
+           modx= moderator1,  
+           johnson_neyman = TRUE)
+```
+
+```{r, message=FALSE}
+library(interactions)
+johnson_neyman(model = model, 
+               pred = dummy1_group,
+               modx = moderator1,
+               alpha = 0.05,
+               line.thickness = 0.5,
+               title = "Johnson-Neyman plot",
+               sig.color = "#00BFC4", insig.color = "#F8766D")
+```
+
+By using the `annotate` function from the `ggplot2` package, we can add text on the moderation figure.
+
+```{r, message=FALSE,  preview=TRUE}
+IE_plot4 <- IE_plot3 + 
+  
+          # add information about simple slopes to plot
+           annotate("text", 
+                    x=1.5,           # X coordinate
+                    y=4.10,          # Y coordinate
+                    label="***",     # text 
+                    size = 8,        # size of text
+                    color = "black", # color of text
+                    angle=150,       # angle
+                    fontface =6)     # format of text
+
+
+IE_plot4
+```
+
+> Future plans: more detailed information about building and testing a model, more graphic functions, mediation, mediated moderation, multilevel modelling and plotting, etc. 
+
+
+
+
+
+
+

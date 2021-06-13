@@ -11,25 +11,33 @@ home:
 navbar:
   title: "CaviR"
   structure:
-    # left:
-    # - tabular
+    left:
+    - articles
+    - applications
     # - plot
     # - workflow
     # - cheatsheet
-    # - articles
     right:
     - reference
     - news
     - github
     - home
   components:
-    # articles:
-    #   text: Articles
-    #   menu:
-    #     - text: Getting started
-    #       href: articles/getting-started.html
-    #     - text: overviewR
-    #       href: articles/overviewR_vignette.html
+    articles:
+      text: Articles
+      menu:
+        - text: Data manipulation
+          href: articles/datamanipulation.html
+        - text: Internal consistency
+          href: articles/intern_consistency.html
+        - text: Correlations
+          href: articles/correlations.html
+        - text: Multidimensional Scaling
+          href: articles/multidimensionalscaling.html
+        - text: Regression modelling
+          href: articles/regressionmodelling.html
+        - text: Cluster analysis
+          href: articles/Clustering.html
     reference:
       text: Reference
       href: reference/index.html
@@ -37,23 +45,13 @@ navbar:
       icon: fa-lightbulb
       text: News
       href: news/index.html
-    # cheatsheet:
-    #   icon: fa-sticky-note
-    #   text: CheatSheet
-    #   href: https://github.com/rstudio/cheatsheets/raw/master/overviewR.pdf
+    Applications:
+      icon: fa-location-arrow
+      text: Applications
+      href: articles/applications.html
     github:
       icon: fab fa-github fa-lg
       href: https://github.com/Watjoa/CaviR/
-    # tabular:
-    #   icon: fa-table
-    #   text: Tabular overview
-    #   menu:
-    #     - text: overview_tab
-    #       href: articles/overviewR_vignette.html#overview_tab
-    #     - text: overview_crosstab
-    #       href: articles/overviewR_vignette.html#overview_crosstab
-    #     - text: Export results
-    #       href: articles/overviewR_vignette.html#overview_print
     # plot:
     #   icon: fa-chart-bar
     #   text: Visual overview

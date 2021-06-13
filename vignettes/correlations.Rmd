@@ -1,0 +1,159 @@
+---
+title: "Correlations"
+description: |
+  Codes for calculating and constructing correlation matrices with descriptives
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Correlations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<style type="text/css">
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+div.orange { background-color:#ffa366; border-radius: 5px; padding: 20px;}
+div.yellow { background-color:#09bb9f; color: white; border-radius: 5px; padding: 20px;}
+</style>
+
+
+The following code provides a Pearson correlation table with descriptives. 
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+
+packages_folder <- "/Users/joachimwaterschoot/Downloads/R Packages"
+  
+packages<- c('foreign','lavaan','tidyverse','cluster',
+     'factoextra','dendextend','ape','tidyr',
+     'magrittr','clValid',
+     'ggfortify','clustree','FactoMineR',
+     'corrplot','ggiraphExtra','GGally',
+     'knitr','kableExtra','plyr','haven','apaTables',
+     'qgraph','dplyr','ComplexHeatmap','dendextend',
+     'circlize','RColorBrewer','ggpubr','rstatix',
+     'car','broom','hausekeep',"writexl",
+     'Publish','data.table','janitor','psych',
+     'sjPlot', 'Hmisc','xtable','survey',
+     'srvyr','questionr','ggplot2','ggfortify',
+     'lme4','lmerTest','foreign','VIM',"mice",'readxl')
+
+```
+
+```{r, echo=FALSE,results='hide',message=FALSE,warning=FALSE}
+lapply(packages, require, character.only = TRUE)
+```
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+library(apaTables)
+library(dplyr)
+
+#install.packages("remotes")
+#remotes::install_github("Cogitos/statxp")
+library('statxp')
+
+data  <- foreign::read.spss("(2)Data Joachim.sav", 
+                  use.value.labels = FALSE, 
+                  to.data.frame=TRUE)
+data$dummy1_group <- as.numeric(data$Condition)
+data$outcome <- data$Pleasure_Interest
+data$moderator1 <- data$Indecisiveness
+data$moderator2 <- data$Open
+data$gender <- data$Geslacht
+data$age <- data$Leeftijd
+```             
+
+In the first step, you make a subset of all variables you want to include in the correlation matrix. You can choose which order they have. 
+
+```{r, echo=TRUE,message=FALSE,warning=FALSE}
+
+# select the variables to correlate and save them in dataframe
+correlation_dataset <- data[, c(
+
+  "Extra","Agree","Con","Neur","Open"
+  
+  )]
+
+```
+
+In the second step, you don't need to do anything. Just copy this code and run it. 
+
+```{r, echo=TRUE,message=FALSE,warning=FALSE}
+# make sure the variables are all numeric
+correlation_dataset <- sapply(correlation_dataset,as.numeric)
+corrtable <- apa.cor.table(correlation_dataset, show.conf.interval = FALSE,filename="cor_APA_t123.doc", table.number=1)
+corrtablee <- as.table(corrtable$table.body)
+rangedel <- seq(4,dim(corrtablee)[1],3)+2
+rangedel <- c(1,3,rangedel[-length(rangedel)])
+corrtablee<- corrtablee[c(rangedel),]
+corstarsdf <- as.data.frame(corstars(correlation_dataset))
+corstarsdf<- data.frame(lapply(corstarsdf, function(x) {
+stringr::str_replace(x, "0.", ".")
+}))
+rownames(corstarsdf) <- NULL
+colnames(corstarsdf) <- rownames(corstarsdf)[1:(length(rownames(corstarsdf))-1)] 
+corstarsdf <- as.matrix(corstarsdf)
+corstarsdf <- as.table(corstarsdf)
+corrtablee[,4:dim(corrtablee)[2]] <- corstarsdf
+
+kable(corrtablee, "html") %>%
+  kable_paper(full_width = F) %>%
+  kable_styling(bootstrap_options = c("hover","condensed", "responsive"),
+                fixed_thead = T,font_size = 15) %>%
+  kable_classic_2()%>%
+#  column_spec(3, background = "lightgrey")%>%
+#  column_spec(4, background = "lightgrey") %>%
+  footnote(general = "", 
+           threeparttable = F, 
+           general_title = "Note. *** p <.001, ** p <. 01, * p < .05", 
+           title_format = "italic")
+
+
+```
+
+The output can be opened in Rstudio or in your browser. When copy it, you can change the layout in your Word file to whatever you like. 
+
+If you want to change the names of the variables, use `colnames(correlation_dataset) <- c(NEW_NAMES)` after step 1 where you replace `NEW_NAMES` by a vector of names you prefer.
+
+## Subset of correlation table
+
+You can select only a specific number of columns of the correlation table. Beware that the first 3 columns do refer to the list of variables, the mean and the standard deviation. Here, the first three columns and the first column of the correlation matrix is selected.
+
+```{r, echo=TRUE,message=FALSE,warning=FALSE}
+
+corrtablee <- corrtablee[,1:4]
+kable(corrtablee, "html") %>%
+  kable_paper(full_width = F) %>%
+  kable_styling(bootstrap_options = c("hover","condensed", "responsive"),
+                fixed_thead = T,font_size = 15) %>%
+  kable_classic_2()%>%
+#  column_spec(3, background = "lightgrey")%>%
+#  column_spec(4, background = "lightgrey") %>%
+  footnote(general = "", 
+           threeparttable = F, 
+           general_title = "Note. *** p <.001, ** p <. 01, * p < .05", 
+           title_format = "italic")
+```
+
+## Save it as html
+
+You can save the correlation table as an html file, so you can copy it easily into your manuscript. 
+
+```{r, echo=TRUE,message=FALSE,warning=FALSE}
+kable(corrtablee, "html") %>%
+  kable_paper(full_width = F) %>%
+  kable_styling(bootstrap_options = c("hover","condensed", "responsive"),
+                fixed_thead = T,font_size = 15) %>%
+  kable_classic_2()%>%
+#  column_spec(3, background = "lightgrey")%>%
+#  column_spec(4, background = "lightgrey") %>%
+  footnote(general = "", 
+           threeparttable = F, 
+           general_title = "Note. *** p <.001, ** p <. 01, * p < .05", 
+           title_format = "italic")%>%
+  save_kable("correlation_table.html")
+```
+
+
+
+
+
+
+

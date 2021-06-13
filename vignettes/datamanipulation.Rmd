@@ -1,0 +1,209 @@
+---
+title: "Data manipulation"
+description: >
+  Codes to read in difference kinds of dataset, manipulate and clean the data matrix to make it work
+  and check the first descriptives.
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data manipulation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<style type="text/css">
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+div.orange { background-color:#ffa366; border-radius: 5px; padding: 20px;}
+div.yellow { background-color:#09bb9f; color: white; border-radius: 5px; padding: 20px;}
+</style>
+
+
+# First steps and tips
+
+* Always use R on your local computer and **not via an VPN connection**  
+
+* Always download the latest version of [R](https://www.r-project.org/) and [Rstudio](https://www.rstudio.com/products/rstudio/download/#download)
+
+* Running a code can be done by *ctrl + enter* (windows) or *cmd + enter* (mac)
+
+* Always direct your R code to a specific file in which you want to use a dataset and save all your files. You can do this by `setwd("/Users/joachimwaterschoot/Downloads/R")` (example for Downloads folder on mac)
+
+* If you have an error, always google this one. Most of the times, a post on a forum provides you a clear answer on what is going on
+
+* A warning (= you can continue) is not an error (= nothing has ran)
+
+# Load and install packages
+
+You can load different packages (list *packages*) at once by the `lapply` function. The list represents most of the packages I use.
+
+```{r,results='hide', echo=TRUE,message=FALSE,warning=FALSE}
+
+packages<- c('foreign','lavaan','tidyverse','cluster',
+     'factoextra','dendextend','ape','tidyr',
+     'magrittr','clValid',
+     'ggfortify','clustree','FactoMineR',
+     'corrplot','ggiraphExtra','GGally',
+     'knitr','kableExtra','plyr','haven','apaTables',
+     'qgraph','dplyr','ComplexHeatmap','dendextend',
+     'circlize','RColorBrewer','ggpubr','rstatix',
+     'car','broom','hausekeep',"writexl",
+     'Publish','data.table','janitor','psych',
+     'sjPlot', 'Hmisc','xtable','survey',
+     'srvyr','questionr','ggplot2','ggfortify',
+     'lme4','lmerTest','foreign','VIM',"mice",'readxl')
+
+lapply(packages, require, character.only = TRUE)
+```
+
+
+
+If necessary, refer to your folder where you have downloaded all packages and load them all at once.
+
+The loading of packages has to be done **each time you open R**. Before you are able to load (and use) them, you have to download these on your computer. You can refer to a specific file wherein you save the packages (here the *Downloads* folder on a mac as example).
+
+```{r, eval = FALSE, echo=TRUE,message=FALSE,warning=FALSE}
+
+packages_folder <- "/Users/joachimwaterschoot/Downloads/R Packages"
+  
+install.packages(packages,lib=packages_folder)
+
+lapply(packages, require, character.only = TRUE, lib.loc=packages_folder)
+
+```
+
+**! Attention**: some of the packages are not available in *cran* and cannot be downloaded by the function above. When you see an error saying that the package cannot be installed, please check google. Most of the times, you have to download the package from github using the *devtools* package (e.g. `devtools::install_github("author/package")` )
+
+# Data upload
+
+You can upload different kinds of filetypes into R.
+
+```{r, eval = FALSE, echo=TRUE,message=FALSE,warning=FALSE}
+
+# EXCEL
+data <- read_excel("file_name.xlsx")
+
+# CSV
+data <- read.csv("file_name.csv", 
+                  header = TRUE, sep = ",", quote = "\"",
+                  dec = ".", fill = TRUE, 
+                  comment.char = "",na.string = "")
+
+## When coming from Qualtrics, delete first two rows including labels and description
+data <- data[-1:-2,]
+
+# SPSS
+library(foreign)
+data <- read.spss("data.sav", 
+                  use.value.labels = FALSE, 
+                  to.data.frame=TRUE)
+
+```
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+data <- read.spss("data.sav", 
+                  use.value.labels = FALSE, 
+                  to.data.frame=TRUE)
+```
+
+When this is done and no error has occurred, you can check if the data is uploaded correctly.
+
+```{r, echo=TRUE,message=FALSE,warning=FALSE}
+# check the first 6 rows of the dataset
+head(data)
+
+# check the last 6 rows of the dataset
+tail(data)
+
+# check the descriptive statistics of the dataset
+summary(data)
+```
+
+## Merge files by rows
+
+By following code, you can merge different files into one based on matched column names.
+
+
+```{r, eval=FALSE, echo=TRUE,message=FALSE,warning=FALSE}
+data <- dplyr::bind_rows(dataset1, dataset2)
+```
+
+<br>
+
+# Manipulate variables
+
+If you want to label specific levels of a categorical variable:
+
+```{r, echo=TRUE,message=FALSE,warning=FALSE}
+
+data$gender <- as.factor(data$gender)
+levels(data$gender)
+data$gender <- factor(data$gender,
+                      levels = c(1,2),
+                      labels = c('male','female'))
+freq(data$gender)
+```
+
+Check summary of a numerical variable
+
+```{r, echo=TRUE,message=FALSE,warning=FALSE}
+data$age <- as.numeric(data$age)
+summary(data$age)
+```
+
+<br>
+
+# Manipulate dataset
+
+## Wide to long
+
+```{r, eval=FALSE, echo=TRUE,message=FALSE,warning=FALSE}
+data_long <- reshape(data = data,
+               idvar = "ppnr",
+               varying = list(
+                 var_1=c('var_1_time1','var_1_time2','var_1_time3'),
+                 var_2=c('var_2_time1','var_2_time2','var_2_time3'),
+                 var_3=c('var_3_time1','var_3_time2','var_3_time3')
+               ),
+               direction="long",
+               v.names = c(
+                'var_1',
+                'var_2',
+                'var_3'
+               ),
+               sep="_")
+rownames(data_long) <- NULL
+```
+
+## Long to wide
+
+```{r, eval=FALSE, echo=TRUE,message=FALSE,warning=FALSE}
+data_wide <- reshape(data_long, idvar = "ppnr", timevar = "time", direction = "wide")
+```
+
+<br>
+
+## Save dataset
+
+You can export your dataset to multiple file types
+
+```{r, message=FALSE}
+
+# SPSS
+write_sav(data, "FILENAME.sav")
+
+# CSV
+write_csv(data,'FILENAME.csv')
+
+# EXCEL
+write_xlsx(data,'FILENAME.xlsx')
+
+# RDS
+saveRDS(data, "FILENAME.rds")
+```
+
+
+
+
+
+
+
+
