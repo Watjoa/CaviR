@@ -1,0 +1,26 @@
+Type: Package
+Package: CaviR
+Title: Run Easily and Efficient Analyses in R
+Version: 0.1
+Authors@R: 
+    c(person(given = "Joachim",
+             family = "Waterschoot",
+             role = c("cre", "aut"),
+             email = "joachim.waterschoot@ugent.be"))
+Description: Generate an easy correlation matrix with descriptives
+License: GPL-3
+URL: https://github.com/Watjoa/CaviR
+BugReports: https://github.com/Watjoa/CaviR/issues
+Depends: 
+    R (>= 3.5.0)
+Imports:
+    kable (>= 1.0.0)
+    psych (>= 1.0.0)
+VignetteBuilder: knitr
+Encoding: UTF-8
+Language: en-US
+LazyData: true
+RoxygenNote: 7.1.1
+Suggests: 
+    rmarkdown,
+    knitr
