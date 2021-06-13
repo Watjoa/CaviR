@@ -6,6 +6,7 @@
 #' @return A html correlation matrix with significance stars, Note and descriptive statistics
 #' @export
 #' @importFrom ggplot2 aes
+#' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 geom_bar
 #' @importFrom ggplot2 geom_hline
 #' @importFrom ggplot2 geom_text
