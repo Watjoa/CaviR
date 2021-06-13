@@ -1,8 +1,6 @@
 pandoc: 2.11.4
 pkgdown: 1.6.1
 pkgdown_sha: ~
-articles:
-  getting-started: getting-started.html
-  overviewR_vignette: overviewR_vignette.html
-last_built: 2021-06-13T14:31Z
+articles: {}
+last_built: 2021-06-13T14:38Z
 
