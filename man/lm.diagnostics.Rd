@@ -2,16 +2,16 @@
 % Please edit documentation in R/lm_diagnostics.R
 \name{lm.diagnostics}
 \alias{lm.diagnostics}
-\title{coRtable}
+\title{lm.diagnostics}
 \usage{
 lm.diagnostics(model)
 }
 \arguments{
-\item{dataset}{Your dataset with the variable in order you want to present them}
+\item{model}{your lm model}
 }
 \value{
-A html correlation matrix with significance stars, Note and descriptive statistics
+Six plot with each a different method to check the model diagnostics
 }
 \description{
-This function plots a correlation table in APA style with descriptive statistics.
+This function plots an overview of six different methods to check model diagnostics.
 }

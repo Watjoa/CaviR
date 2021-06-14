@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>coRtable — lm.diagnostics • CaviR</title>
+<title>lm.diagnostics — lm.diagnostics • CaviR</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="coRtable — lm.diagnostics" />
-<meta property="og:description" content="This function plots a correlation table in APA style with descriptive statistics." />
+<meta property="og:title" content="lm.diagnostics — lm.diagnostics" />
+<meta property="og:description" content="This function plots an overview of six different methods to check model diagnostics." />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -88,6 +88,8 @@
       <ul class="nav navbar-nav">
         <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa-code"></span>
+     
     Articles
      
     <span class="caret"></span>
@@ -157,13 +159,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>coRtable</h1>
+    <h1>lm.diagnostics</h1>
     <small class="dont-index">Source: <a href='https://github.com/Watjoa/CaviR/blob/master/R/lm_diagnostics.R'><code>R/lm_diagnostics.R</code></a></small>
     <div class="hidden name"><code>lm.diagnostics.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function plots a correlation table in APA style with descriptive statistics.</p>
+    <p>This function plots an overview of six different methods to check model diagnostics.</p>
     </div>
 
     <pre class="usage"><span class='fu'>lm.diagnostics</span><span class='op'>(</span><span class='va'>model</span><span class='op'>)</span></pre>
@@ -172,14 +174,14 @@
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>dataset</th>
-      <td><p>Your dataset with the variable in order you want to present them</p></td>
+      <th>model</th>
+      <td><p>your lm model</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A html correlation matrix with significance stars, Note and descriptive statistics</p>
+    <p>Six plot with each a different method to check the model diagnostics</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -9,6 +9,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<style type="text/css">
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+div.orange { background-color:#ffa366; border-radius: 5px; padding: 20px;}
+div.yellow { background-color:#09bb9f; color: white; border-radius: 5px; padding: 20px;}
+</style>
 
 ```{r, echo=FALSE,message=FALSE,warning=FALSE}
 data  <- foreign::read.spss("(2)Data Joachim.sav", 
@@ -76,6 +81,12 @@ _* future plans: Next to the graphics, there are multiple test to check assumpti
 5. **Influential outliers**: are there outliers influential to my model?
   + *Check?*: is the blue line in *plot 7* curved?  
   + *Violation?*: this could be problematic for estimating parameters (e.g. mean) and sum of squared and biased results.
+  
+<div class = "yellow">
+
+Use the CaviR function `lm.diagnostics` to check these diagnostics in one line of code
+
+</div>
   
 ```{r, message=FALSE, fig.height=12}
 library(ggplot2)

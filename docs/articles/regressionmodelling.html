@@ -47,6 +47,8 @@
       <ul class="nav navbar-nav">
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa-code"></span>
+     
     Articles
      
     <span class="caret"></span>
@@ -126,6 +128,11 @@
 
     
     
+<style type="text/css">
+div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
+div.orange { background-color:#ffa366; border-radius: 5px; padding: 20px;}
+div.yellow { background-color:#09bb9f; color: white; border-radius: 5px; padding: 20px;}
+</style>
 <div id="model-building" class="section level2">
 <h2 class="hasAnchor">
 <a href="#model-building" class="anchor"></a>Model building</h2>
@@ -436,6 +443,9 @@ dummy1_group:moderator1
 <li>
 <em>Violation?</em>: this could be problematic for estimating parameters (e.g. mean) and sum of squared and biased results.</li>
 </ul>
+<div class="yellow">
+<p>Use the CaviR function <code>lm.diagnostics</code> to check these diagnostics in one line of code</p>
+</div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 

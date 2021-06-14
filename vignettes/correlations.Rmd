@@ -75,6 +75,12 @@ correlation_dataset <- data[, c(
 
 In the second step, you don't need to do anything. Just copy this code and run it. 
 
+<div class = "yellow">
+
+Use the CaviR function `coRtable()` to build the correlation table in one line of code
+
+</div>
+
 ```{r, echo=TRUE,message=FALSE,warning=FALSE}
 # make sure the variables are all numeric
 correlation_dataset <- sapply(correlation_dataset,as.numeric)

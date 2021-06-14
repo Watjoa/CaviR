@@ -1,9 +1,9 @@
-#' @title coRtable
+#' @title lm.diagnostics
 #'
-#' @description This function plots a correlation table in APA style with descriptive statistics.
+#' @description This function plots an overview of six different methods to check model diagnostics.
 #'
-#' @param dataset Your dataset with the variable in order you want to present them
-#' @return A html correlation matrix with significance stars, Note and descriptive statistics
+#' @param model your lm model
+#' @return Six plot with each a different method to check the model diagnostics
 #' @export
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 ggplot

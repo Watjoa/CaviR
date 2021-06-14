@@ -29,21 +29,19 @@ lapply(pkgs, library, character.only = TRUE)
 
 # CaviR <img src='man/figures/logo.png' align="right" height="139" />
 
-badges: start
 [![R-CMD-check](https://github.com/cosimameyer/overviewR/workflows/R-CMD-check/badge.svg)](https://github.com/cosimameyer/overviewR/actions)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![CaviR badge](https://img.shields.io/badge/CaviR-ready%20to%20use-brightgreen)](https://github.com/Watjoa/CaviR)
 [![R badge](https://img.shields.io/badge/Build%20with-♥%20and%20R-blue)](https://github.com/cosimameyer/overviewR)
-[![license](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Last-changedate](https://img.shields.io/badge/last%20change-`r gsub('-', '--', Sys.Date())`-green.svg)](/commits/master)
-badges: end
 
-<!-- [**You can access the CheatSheet for overviewR here**](https://github.com/cosimameyer/overviewR/blob/master/man/figures/CheatSheet_overviewR.pdf) -->
+> 'Simplicity is the origin of everything' - Tony Iommi (Black Sabbath)
 
 The goal of CaviR is to make it easy to get a nice output of R codes without coding too many detailed information. At the moment, there are the following functions:
 
-- `coRtable` generates a correlation table with descriptive statistics and significance stars
+- `coRtable` generates a correlation table with descriptive statistics and significance stars  
+- `lm.diagnostics` generates a visual overview of linear model diagnostics
 
 ## <i class="far fa-download"></i> Installation
 
@@ -104,21 +102,21 @@ To generate an overview of all important diagnostics for a linear model, ```coRt
 
 **Model assumptions: **
 
-1. **Linearity**: is my model linear?
+- **Linearity**: is my model linear?
   + *Check?*: (1) is the point cloud at random and (2) is the blue line in plot 2 similar to the horizontal line in *plot 2*?  
   + *Violation?*: consider another relationship (e.g. cubric, curvilinear)
   
-2. **Normality**: is the distribution of my parameters / residuals normal?
+- **Normality**: is the distribution of my parameters / residuals normal?
   + *Check?*: do I have a Q-Q plot in *plot 3* where all datapoints are as close too the diagonal? Is the distribution as similar as possible to the normal distribution in *plot 8*?  
   + *Violation?*: consider transformations of your parameters or check which variable is necessary to add to the model
   
-3. **Homoscedasticity**: is the spread of my data across levels of my predictor the same?
+- **Homoscedasticity**: is the spread of my data across levels of my predictor the same?
   + *Check?*: (1) is the point cloud at random and (2) is the blue line in plot 2 similar to the horizontal line in *plot 2*? (3) Is there a pattern in *plot 4*?  
   + *Violation?*: in case of heteroscedasticity, you will have inconsistency in calculation of standard errors and parameter estimation in the model. This results in biased confidence intervals and significance tests.
   
-4. **Independence**: are the errors in my model related to each other?
+- **Independence**: are the errors in my model related to each other?
   
-5. **Influential outliers**: are there outliers influential to my model?
+- **Influential outliers**: are there outliers influential to my model?
   + *Check?*: is the blue line in *plot 7* curved?  
   + *Violation?*: this could be problematic for estimating parameters (e.g. mean) and sum of squared and biased results.
 

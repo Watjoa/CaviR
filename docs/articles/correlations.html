@@ -47,6 +47,8 @@
       <ul class="nav navbar-nav">
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa-code"></span>
+     
     Articles
      
     <span class="caret"></span>
@@ -142,6 +144,9 @@ div.yellow { background-color:#09bb9f; color: white; border-radius: 5px; padding
   
   <span class="op">)</span><span class="op">]</span></code></pre></div>
 <p>In the second step, you don’t need to do anything. Just copy this code and run it.</p>
+<div class="yellow">
+<p>Use the CaviR function <code><a href="../reference/coRtable.html">coRtable()</a></code> to build the correlation table in one line of code</p>
+</div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># make sure the variables are all numeric</span>
 <span class="va">correlation_dataset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">correlation_dataset</span>,<span class="va">as.numeric</span><span class="op">)</span>
