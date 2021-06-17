@@ -7,10 +7,14 @@
 manovaR(variables, group, dataset)
 }
 \arguments{
-\item{model}{your lm model}
+\item{variables}{a vector of your variables}
+
+\item{group}{a character of the name of your group variable}
+
+\item{dataset}{name of the dataset}
 }
 \value{
-Six plot with each a different method to check the model diagnostics
+MANOVA table with descriptives and statistics
 }
 \description{
 manova table with statistics
