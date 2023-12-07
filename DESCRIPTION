@@ -25,6 +25,7 @@ Depends:
     flextable,
     ggeffects,
     ggplot2,
+    lmerTest,
     performance,
     ggthemes,
     data.table,
