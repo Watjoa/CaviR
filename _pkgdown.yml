@@ -1,0 +1,56 @@
+title: CaviR
+url: http://Watjoa.github.io/CaviR
+template:
+  params:
+    bootswatch: flatly
+    ganalytics: 275954966
+
+development:
+  mode: auto
+
+home:
+  strip_header: false
+  links:
+  - text: Research methods in R
+    href: http://www.andywills.info/rminr/
+
+navbar:
+  title: "CaviR"
+  structure:
+    left:
+    - articles
+    # # - plot
+    # # - workflow
+    # # - cheatsheet
+    right:
+    - application
+    - reference
+    - news
+    - github
+    - home
+  components:
+    news:
+      icon: fa-lightbulb
+      text: News
+      href: news/index.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/Watjoa/
+    application:
+      icon: fa fa-desktop
+      text: CaviR online
+      href: https://watjoa.shinyapps.io/CaviR/
+    articles:
+      icon: fa-code
+      text: Articles
+      # menu:
+      # - text: Data manipulation
+      #   href: articles/datamanipulation.html
+      # - text: Internal consistency
+      #   href: articles/intern_consistency.html
+      # - text: Correlations
+      #   href: articles/correlations.html
+      # - text: Regression
+      #   href: articles/regressionmodelling.html
+      # - text: MANOVA
+      #   href: articles/Manova.html
