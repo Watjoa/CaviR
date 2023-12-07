@@ -64,7 +64,7 @@ summaRy<- function(model) { # input is a dataset (x) that includes a grouping va
                                       ', p = ',
                                       anovamodel$p.value,sep=''),
                             f = format(round(as.numeric(anovamodel$partial.etasq),2), nsmall = 2),
-                            g = format(round(as.numeric(multicollinearity(model)$VIF),2), nsmall = 2))
+                            g = format(round(as.numeric(performance::multicollinearity(model)$VIF),2), nsmall = 2))
   colnames(anovamodell) <- colnames(summary)
 
   anovamodellb <- data.frame(a = anovamodelb$term,
@@ -179,7 +179,7 @@ summaRy<- function(model) { # input is a dataset (x) that includes a grouping va
                                           ', p = ',
                                           anovamodel$p.value,sep=''),
                                 f = format(round(as.numeric(anovamodel$partial.etasq),2), nsmall = 2),
-                                g = format(round(as.numeric(multicollinearity(model)$VIF),2), nsmall = 2))
+                                g = format(round(as.numeric(performance::multicollinearity(model)$VIF),2), nsmall = 2))
       colnames(anovamodell) <- colnames(summary)
 
       anovamodellb <- data.frame(a = anovamodelb$term,
