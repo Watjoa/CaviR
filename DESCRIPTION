@@ -17,6 +17,7 @@ Depends:
     stats,
     cluster,
     purrr,
+    rstatix,
     NbClust,
     cowplot,
     psych,
