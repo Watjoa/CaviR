@@ -10,6 +10,7 @@
 #' @importFrom flextable flextable add_footer_lines bold italic autofit
 #' @importFrom modelsummary get_gof
 #' @importFrom sjstats anova_stats
+#' @importFrom performance multicollinearity
 
 summaRy<- function(model) { # input is a dataset (x) that includes a grouping variable (group)
 

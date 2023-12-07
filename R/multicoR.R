@@ -10,13 +10,17 @@
 #' @importFrom papaja printnum
 #' @importFrom flextable flextable add_footer_lines theme_zebra autofit
 
-multicoR<- function(dataset,group) { # input is a dataset (x) that includes a grouping variable (group)
+multicoR<- function(dataset) { # input is a dataset (x) that includes a grouping variable (group)
 
+  dataset <- as.data.frame(dataset)
 
-  corr <- as.data.frame(sapply(dataset,as.numeric))
-  corr <- corr[, ! names(corr) %in% c(group), drop = F]
+  group <- colnames(dataset)[1]
+  names(dataset)[names(dataset) == group] <- 'groupVAR'
 
-  corr$Group <- dataset[,group]
+  corr <- dataset[,-1]
+  corr <- as.data.frame(sapply(corr,as.numeric))
+
+  corr$Group <- dataset[,'groupVAR']
   sat.stats <- suppressWarnings(psych::statsBy(corr, "Group", alpha=.05,
                        cors = TRUE, method="pearson"))
   sat.stats.between <- as.matrix(round(sat.stats$rbg,2))
@@ -58,7 +62,7 @@ multicoR<- function(dataset,group) { # input is a dataset (x) that includes a gr
   y <- NULL
   for(i in 1:length(vars)){
   dataset <- as.data.frame(dataset)
-  icclistt <- multilevelTools::iccMixed(dv = vars[i],id = group, dataset)
+  icclistt <- multilevelTools::iccMixed(dv = vars[i],id = "groupVAR", dataset)
   icclistt <- round(icclistt[which(icclistt$Var==group),'ICC'],2)
  # icclistt <- format(round(icclistt,2), nsmall = 2)
   y <- rbind(y, icclistt)

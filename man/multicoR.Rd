@@ -4,7 +4,7 @@
 \alias{multicoR}
 \title{multicoR}
 \usage{
-multicoR(dataset, group)
+multicoR(dataset)
 }
 \arguments{
 \item{dataset}{Your dataset with the variable in order you want to present them}
