@@ -7,7 +7,7 @@ Authors@R:
              family = "Waterschoot",
              role = c("cre", "aut"),
              email = "joachim.waterschoot@ugent.be"))
-Description: Generate an easy correlation matrix with descriptives
+Description: Generate an easy correlation matrix with descriptives.
 License: MIT + file LICENSE
 Encoding: UTF-8
 URL: https://github.com/Watjoa/CaviR

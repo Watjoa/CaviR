@@ -10,6 +10,8 @@ manovaR(data, tukey = FALSE, sign = 0.05)
 \item{data}{Your data with the variable in order you want to present them}
 
 \item{tukey}{Your data with the variable in order you want to present them}
+
+\item{sign}{significance level of multi comparison}
 }
 \value{
 A html correlation matrix with significance stars, Note and descriptive statistics

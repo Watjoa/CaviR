@@ -4,6 +4,7 @@
 #'
 #' @param data Your data with the variable in order you want to present them
 #' @param tukey Your data with the variable in order you want to present them
+#' @param sign significance level of multi comparison
 #' @return A html correlation matrix with significance stars, Note and descriptive statistics
 #' @export
 #' @importFrom stats anova lm
