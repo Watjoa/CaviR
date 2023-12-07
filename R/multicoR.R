@@ -68,8 +68,10 @@ multicoR<- function(dataset) { # input is a dataset (x) that includes a grouping
   y <- rbind(y, icclistt)
   }
 
-  Rnew <- suppressWarnings(cbind(round(psych::describe(corr)$mean,2),
-                                 round(psych::describe(corr)$sd,2), y$ICC,Rnew)) #describe x, M sD - put them in the matrix
+  Rnew <- (cbind(round(psych::describe(corr)$mean,2),
+                                 round(psych::describe(corr)$sd,2),
+                                 y$ICC,
+                                 Rnew)) #describe x, M sD - put them in the matrix
   colnames(Rnew)[1:3] <- c("M","SD","ICC") #New column headers
 
   names <- rownames(Rnew)

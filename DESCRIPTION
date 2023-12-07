@@ -17,7 +17,6 @@ Depends:
     stats,
     cluster,
     purrr,
-    ggplot2,
     NbClust,
     cowplot,
     psych,
@@ -25,12 +24,14 @@ Depends:
     flextable,
     ggeffects,
     ggplot2,
+    performance,
     ggthemes,
     data.table,
     gtools,
     emmeans,
     effectsize,
     multcomp,
+    lme4,
     dplyr,
     multilevelTools,
     modelsummary,
@@ -41,6 +42,4 @@ RoxygenNote: 7.2.3
 NeedsCompilation: no
 Maintainer: Joachim Waterschoot <joachim.waterschoot@ugent.be>
 Repository: CRAN
-Suggests: 
-    testthat (>= 3.0.0)
 Config/testthat/edition: 3

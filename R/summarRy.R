@@ -11,6 +11,8 @@
 #' @importFrom modelsummary get_gof
 #' @importFrom sjstats anova_stats
 #' @importFrom performance multicollinearity
+#' @importFrom stats pf residuals
+#' @importFrom lme4 VarCorr
 
 summaRy<- function(model) { # input is a dataset (x) that includes a grouping variable (group)
 
@@ -86,7 +88,7 @@ summaRy<- function(model) { # input is a dataset (x) that includes a grouping va
                 length(summary(model)$na.action),') missing obs. deleted',sep="")
   summary <- flextable::add_footer_lines(summary, info)
 
-  pvalueFtestmodel <- format(round(pf(summary(model)$fstatistic[1], summary(model)$fstatistic[2], summary(model)$fstatistic[3], lower.tail = FALSE),2), nsmall = 2)
+  pvalueFtestmodel <- format(round(stats::pf(summary(model)$fstatistic[1], summary(model)$fstatistic[2], summary(model)$fstatistic[3], lower.tail = FALSE),2), nsmall = 2)
   pvalueFtestmodel <- ifelse(as.numeric(pvalueFtestmodel)<0.001,pvalueFtestmodel <- "<.001",NULL)
 
   fit <- paste('Fit: F(',
@@ -126,7 +128,7 @@ summaRy<- function(model) { # input is a dataset (x) that includes a grouping va
       summary[which(summary$`p-value`<0.001),'p-value'] <- '<.001'
       rownames(summary) <- NULL
 
-      randomeffects <- as.data.frame(VarCorr(model))[,c(1,4)]
+      randomeffects <- as.data.frame(lme4::VarCorr(model))[,c(1,4)]
       randomeffects <- round_df(randomeffects,2)
       randomeffects$vcov <- format(round(as.numeric(sqrt(randomeffects$vcov)),2), nsmall = 2)
 
@@ -198,7 +200,7 @@ summaRy<- function(model) { # input is a dataset (x) that includes a grouping va
       RANDOMROW <- as.numeric(rownames(summary[which(summary$Predictors=="Random effects:"),]))
 
       summary <- flextable::flextable(summary)
-      info <- paste('Info: ',length(residuals(model)), ' observations, (',
+      info <- paste('Info: ',length(stats::residuals(model)), ' observations, (',
                     length(summary(model)$na.action),') missing obs. deleted',sep="")
       summary <- flextable::add_footer_lines(summary, info)
 
