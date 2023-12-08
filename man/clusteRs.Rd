@@ -4,10 +4,12 @@
 \alias{clusteRs}
 \title{clusteRs}
 \usage{
-clusteRs(dataset)
+clusteRs(dataset, range = 10)
 }
 \arguments{
 \item{dataset}{dataset}
+
+\item{range}{maximum number of clusters}
 }
 \value{
 overview of indices for number of clusters

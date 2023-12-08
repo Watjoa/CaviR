@@ -159,14 +159,14 @@ summaRy<- function(model) { # input is a dataset (x) that includes a grouping va
       leeg5 <- data.frame(a = NA, b = 'Sumsq', c = 'Meansq', d = '(NumDF, DenDF)', e = 'F stat', f = 'partial η2', g = 'VIF')
       colnames(leeg5) <- colnames(summary)
 
-      anovamodel <- as.data.frame(sjstats::anova_stats(model))[c(1:length(rownames(as.data.frame(sjstats::anova_stats(model))))-1),c('term','sumsq','meansq',
+      anovamodel <- suppressWarnings(as.data.frame(sjstats::anova_stats(model))[c(1:length(rownames(as.data.frame(sjstats::anova_stats(model))))-1),c('term','sumsq','meansq',
                                                                                                                    'NumDF','DenDF',
                                                                                                              'statistic','p.value','df',
-                                                                                                             'etasq','partial.etasq','cohens.f')]
-      anovamodelb <- as.data.frame(sjstats::anova_stats(model))[c(length(rownames(as.data.frame(sjstats::anova_stats(model))))),c('term','sumsq','meansq',
+                                                                                                             'etasq','partial.etasq','cohens.f')])
+      anovamodelb <- suppressWarnings(as.data.frame(sjstats::anova_stats(model))[c(length(rownames(as.data.frame(sjstats::anova_stats(model))))),c('term','sumsq','meansq',
                                                                                                                 'NumDF','DenDF',
                                                                                                           'statistic','p.value','df',
-                                                                                                          'etasq','partial.etasq','cohens.f')]
+                                                                                                          'etasq','partial.etasq','cohens.f')])
       anovamodel$p.value <- format(round(as.numeric(anovamodel$p.value),2), nsmall = 2)
       anovamodel[which(as.numeric(anovamodel$p.value)<0.001),'p.value'] <- '<.001'
 

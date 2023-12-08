@@ -316,12 +316,11 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',xaxis = 'predictor',mod
     numbers <- numbers[!is.na(numbers$numbers),]
     print('highest values not significant')
   } else if (intervalcheck == "TRUETRUE"){
-    print('interval detected within range')
+    numbers <- numbers
   } else if (intervalcheck == "FALSEFALSE"){
     numbers[which(numbers$labelss=="lower significance"),'numbers'] <- NA
     numbers[which(numbers$labelss=="higher significance"),'numbers'] <- NA
     numbers <- numbers[!is.na(numbers$numbers),]
-    print('no interval detected within range')
   }
 
   lines <- as.numeric(numbers$numbers)
