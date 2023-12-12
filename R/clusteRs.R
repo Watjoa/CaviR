@@ -72,7 +72,7 @@ clusteRs <- function(dataset,range=10){
             km.algorithm = "Hartigan-Wong")$tot.withinss
   }
   # Compute and plot wss for k = 1 to k = 15
-  k.values <- 2:range
+  k.values <- 1:range
 
   # extract wss for 2-15 clusters
   wss_values <- purrr::map_dbl(k.values, wss)
@@ -103,8 +103,8 @@ clusteRs <- function(dataset,range=10){
   ss <- ss[order(match(ss$cluster, c("1", "2", "3"))),]
 
   averagesilhplotplot <- ggplot2::ggplot(data=ss, ggplot2::aes(x=ppnr, y=silhouette,fill=cluster, order=cluster)) +
-    ggplot2::geom_bar(stat="identity",width = 0.7,
-             position=ggplot2::position_dodge())+
+    ggplot2::geom_bar(stat="identity",
+             position=ggplot2::position_dodge(width = 0.7))+
     ggplot2::scale_fill_manual("Cluster", values = c("1"="#2f3c4d","2"="#ad131b","3"="#cc6a0e"))+
     ggplot2::theme(
       legend.position = 'right',
@@ -117,7 +117,7 @@ clusteRs <- function(dataset,range=10){
     ggplot2::labs(subtitle = "Silhouette coefficients by cases" ) +
     ggplot2::xlab("Cases")
 
-  minnumber <- 2
+  minnumber <- 1
   maxnumber <- range
   dataset <- dff
 
@@ -145,9 +145,8 @@ clusteRs <- function(dataset,range=10){
                            factor_key=TRUE)
 
   varianceplot <-ggplot2::ggplot(data=data_longtable, ggplot2::aes(x=clusters, y=variance, fill=type)) +
-    ggplot2::geom_bar(stat="identity",width = 0.7,
-
-             position=ggplot2::position_dodge(),color='black')+
+    ggplot2::geom_bar(stat="identity",
+             position=ggplot2::position_dodge(width = 0.7),color='black')+
     ggplot2::scale_fill_manual("Variance",
                       values = c("within" = "#2f3c4d",
                                  "between" = "#ad131b"))+
@@ -165,7 +164,7 @@ clusteRs <- function(dataset,range=10){
 
 
   # Compute and plot wss for k = 2 to k = 15
-  k.values <- 2:range
+  k.values <- 1:range
 
   # extract avg silhouette for 2-15 clusters
   avg_sil_values <- purrr::map_dbl(k.values, avg_sil)
@@ -173,8 +172,8 @@ clusteRs <- function(dataset,range=10){
   averagesilh <- as.data.frame(t(rbind(k.values,avg_sil_values)))
 
   averagesilhplot <- ggplot2::ggplot(data=averagesilh, ggplot2::aes(x=k.values, y=avg_sil_values)) +
-    ggplot2::geom_line(stat="identity",width = 0.7,
-              position=ggplot2::position_dodge(),color='black')+
+    ggplot2::geom_line(stat="identity",
+              position=ggplot2::position_dodge(width = 0.7),color='black')+
     ggplot2::geom_point()+
     ggplot2::theme(
       legend.position = 'right',
@@ -2563,7 +2562,7 @@ clusteRs <- function(dataset,range=10){
   }
 
   otherind <- NbClustadapted(dff, distance = "euclidean",
-                      min.nc = 2, max.nc = range,
+                      min.nc = 1, max.nc = range,
                       method = "ward.D2", index ="all")
 
 
@@ -2575,8 +2574,8 @@ clusteRs <- function(dataset,range=10){
   colnames(summ.bestnc) <- c('Frequency',"clusters")
   summ.bestnc$clusters <- as.numeric(summ.bestnc$clusters)
   summaryplot <- ggplot2::ggplot(data=summ.bestnc, ggplot2::aes(x=clusters, y=Frequency)) +
-    ggplot2::geom_bar(stat="identity",width = 0.7,
-             position=ggplot2::position_dodge(),fill="#2f3c4d")+
+    ggplot2::geom_bar(stat="identity",
+             position=ggplot2::position_dodge(width = 0.7),fill="#2f3c4d")+
     ggplot2::theme(
       legend.position = 'right',
       legend.spacing.x = ggplot2::unit(1, 'mm'),
@@ -2586,7 +2585,7 @@ clusteRs <- function(dataset,range=10){
     ggplot2::theme_minimal()+
     ggplot2::ylab("Frequency of indices")+
     ggplot2::scale_y_continuous(breaks = seq(0, max(summ.bestnc$Frequency), by = 1))+
-    ggplot2::scale_x_continuous(name="Clusters", breaks=c(2:range))+
+    ggplot2::scale_x_continuous(name="Clusters", breaks=c(1:range))+
     ggplot2::xlab("Clusters")+
     ggplot2::ggtitle('Summary frequency 30 indices')
 

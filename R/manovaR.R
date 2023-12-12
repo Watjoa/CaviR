@@ -68,9 +68,7 @@ manovaR<- function(data,tukey = FALSE,sign = 0.05) {
       totals$comb <- paste(totals[,1],totals[,2],sep=" ")
       totals <- as.data.frame(t(totals$comb))
       colnames(totals) <- names
-totals
-
-descriptives[[i]] <- totals
+      descriptives[[i]] <- totals
     }
 
     descriptives <- dplyr::bind_rows(descriptives)
@@ -102,7 +100,7 @@ descriptives[[i]] <- totals
   fvalue[which(fvalue$`p-value`<.001),'p-value'] <- '<.001'
   colnames(fvalue) <- c('F-value','p-value', ' ')
 
-  etasq <- lapply(models, suppressMessages(effectsize::eta_squared))
+  etasq <- lapply(models, suppressWarnings(effectsize::eta_squared))
   anovatabbetasq <- matrix(unlist(etasq), nrow=length(etasq), byrow=T)
   fvalueetasq <- as.numeric(anovatabbetasq[,2])
 
