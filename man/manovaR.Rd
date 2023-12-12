@@ -4,12 +4,14 @@
 \alias{manovaR}
 \title{manovaR}
 \usage{
-manovaR(data, tukey = FALSE, sign = 0.05)
+manovaR(data, tukey = FALSE, stand = TRUE, sign = 0.05)
 }
 \arguments{
 \item{data}{Your data with the variable in order you want to present them}
 
 \item{tukey}{Your data with the variable in order you want to present them}
+
+\item{stand}{present standard deviations or not}
 
 \item{sign}{significance level of multi comparison}
 }

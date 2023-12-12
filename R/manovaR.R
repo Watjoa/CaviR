@@ -3,6 +3,7 @@
 #' @description This function plots a correlation table in APA style with descriptive statistics.
 #'
 #' @param data Your data with the variable in order you want to present them
+#' @param stand present standard deviations or not
 #' @param tukey Your data with the variable in order you want to present them
 #' @param sign significance level of multi comparison
 #' @return A html correlation matrix with significance stars, Note and descriptive statistics
@@ -10,13 +11,14 @@
 #' @importFrom stats anova lm
 #' @importFrom emmeans emmeans
 #' @importFrom psych describeBy cohen.d
-#' @importFrom flextable flextable footnote valign autofit as_paragraph
+#' @importFrom flextable flextable footnote valign autofit bold as_paragraph align_text_col align
 #' @importFrom effectsize eta_squared
 #' @importFrom gtools stars.pval
 #' @importFrom multcomp cld
 #' @importFrom dplyr bind_rows
 
-manovaR<- function(data,tukey = FALSE,sign = 0.05) {
+manovaR<- function(data,tukey = FALSE, stand=TRUE,sign = 0.05) {
+
 
   dataset <- as.data.frame(data)
 
@@ -31,19 +33,33 @@ manovaR<- function(data,tukey = FALSE,sign = 0.05) {
       stats::lm(substitute(i~ groupVAR, list(i = as.name(x))), data = dataset)})
 
   if(tukey==FALSE){
+
     table3 <- psych::describeBy(dfmanova,
                                 group=dataset$groupVAR,
                                 mat=TRUE,type=3,digits=2)
-    table34 <- table3[,c('group1','mean')]
 
+    if(stand==FALSE){
+    table34 <- table3[,c('group1','mean')]
+    table34$mean <- format(round(table34$mean,2), nsmall = 2)
     table35 <- data.frame(split(c(table34$mean),table34$group1))
+
+    }else if (stand==TRUE){
+    table34 <- table3[,c('group1','mean','sd')]
+    table34$mean <- format(round(table34$mean,2), nsmall = 2)
+    table34$sd <- format(round(table34$sd,2), nsmall = 2)
+    table34$comb <- paste(table34$mean,' (±',table34$sd,')',sep="")
+    table35 <- data.frame(split(c(table34$comb),table34$group1))
+
+    }
+
     colnames(table35) <- levels(as.factor(table34$group1))
     rownames(table35) <- names(dfmanova)
 
   }else if (tukey==TRUE & length(levels(dataset$groupVAR))>2){
 
-
     descriptives <- list()
+
+
     for(i in 1:length(models)) {
       mod_means_contr <- emmeans::emmeans(object = models[[i]],
                                           pairwise ~ groupVAR,
@@ -53,9 +69,31 @@ manovaR<- function(data,tukey = FALSE,sign = 0.05) {
       means <- as.data.frame(t(round(means$emmean,2)))
       colnames(means) <- names
 
-      letterss <- suppressWarnings(multcomp::cld(mod_means_contr,sort=TRUE,
+                if(stand==FALSE){
+                  table3 <- psych::describeBy(dfmanova[,i],
+                                              group=dataset$groupVAR,
+                                              mat=TRUE,type=3,digits=2)
+                  table34 <- table3[,c('group1','mean')]
+                  table34$mean <- format(round(table34$mean,2), nsmall = 2)
+                  table35 <- data.frame(split(c(table34$mean),table34$group1))
+                  table35<-table35[names(means)]
+                  means <- table35
+                }else if (stand==TRUE){
+                  table3 <- psych::describeBy(dfmanova[,i],
+                                              group=dataset$groupVAR,
+                                              mat=TRUE,type=3,digits=2)
+                  table34 <- table3[,c('group1','mean','sd')]
+                  table34$mean <- format(round(table34$mean,2), nsmall = 2)
+                  table34$sd <- format(round(table34$sd,2), nsmall = 2)
+                  table34$comb <- paste(table34$mean,' (±',table34$sd,')',sep="")
+                  table35 <- data.frame(split(c(table34$comb),table34$group1))
+                  table35<-table35[names(means)]
+                  means <- table35
+                }
+
+      letterss <- suppressMessages( suppressWarnings(multcomp::cld(mod_means_contr,sort=TRUE,
                                        level=sign,
-                                       adjust = "tukey",Letters=LETTERS))
+                                       adjust = "tukey",Letters=LETTERS)))
 
       letters <- letterss[,c('.group')]
       letters <- gsub(" ", "", letters)
@@ -74,20 +112,31 @@ manovaR<- function(data,tukey = FALSE,sign = 0.05) {
     descriptives <- dplyr::bind_rows(descriptives)
     rownames(descriptives) <- names(dfmanova)
     table35 <- descriptives
+
   }else if (tukey==TRUE & length(levels(dataset$groupVAR))<3){
 
     table3 <- psych::describeBy(dfmanova,
                                 group=dataset$groupVAR,
                                 mat=TRUE,type=3,digits=2)
-    table34 <- table3[,c('group1','mean')]
 
-    table35 <- data.frame(split(c(table34$mean),table34$group1))
+    if(stand==FALSE){
+      table34 <- table3[,c('group1','mean')]
+      table34$mean <- format(round(table34$mean,2), nsmall = 2)
+      table35 <- data.frame(split(c(table34$mean),table34$group1))
+
+    }else if (stand==TRUE){
+      table34 <- table3[,c('group1','mean','sd')]
+      table34$mean <- format(round(table34$mean,2), nsmall = 2)
+      table34$sd <- format(round(table34$sd,2), nsmall = 2)
+      table34$comb <- paste(table34$mean,' (±',table34$sd,')',sep="")
+      table35 <- data.frame(split(c(table34$comb),table34$group1))
+
+    }
+
     colnames(table35) <- levels(as.factor(table34$group1))
     rownames(table35) <- names(dfmanova)
     print('Grouping variable has only 2 levels. Tukey not applicable')
   }
-
-
 
   anovatab <- lapply(models, anova)
   anovatabb <- data.frame(matrix(unlist(anovatab),
@@ -100,7 +149,7 @@ manovaR<- function(data,tukey = FALSE,sign = 0.05) {
   fvalue[which(fvalue$`p-value`<.001),'p-value'] <- '<.001'
   colnames(fvalue) <- c('F-value','p-value', ' ')
 
-  etasq <- lapply(models, suppressPackageStartupMessages(suppressMessages(suppressMessages(effectsize::eta_squared))))
+  etasq <- suppressMessages(lapply(models, suppressPackageStartupMessages(suppressMessages(suppressMessages(effectsize::eta_squared)))))
   anovatabbetasq <- matrix(unlist(etasq), nrow=length(etasq), byrow=T)
   fvalueetasq <- as.numeric(anovatabbetasq[,2])
 
@@ -130,6 +179,9 @@ manovaR<- function(data,tukey = FALSE,sign = 0.05) {
   )
 
   table <- flextable::flextable(total)
+  table <- flextable::align_text_col(table,align = "center")
+  table <- flextable::align(table,j=1,align = "left")
+  table <- flextable::align(table,j=1,align = "left",part="header")
   table <- flextable::footnote(table, i = 1, j = 1,
                                value = flextable::as_paragraph(
                                  c(test.label)
@@ -137,6 +189,7 @@ manovaR<- function(data,tukey = FALSE,sign = 0.05) {
                                ref_symbols = c(" "),
                                part = "header")
   table <- flextable::valign(table, valign = "bottom", part = "header")
+  table <- flextable::bold(table, i = 1, bold = TRUE, part = "header")
   table <- flextable::autofit(table)
   return(table)
 }
