@@ -62,7 +62,7 @@ multicoR<- function(dataset) { # input is a dataset (x) that includes a grouping
   y <- NULL
   for(i in 1:length(vars)){
   dataset <- as.data.frame(dataset)
-  icclistt <- multilevelTools::iccMixed(dv = vars[i],id = "groupVAR", dataset)
+  icclistt <- suppressMessages(suppressWarnings(multilevelTools::iccMixed(dv = vars[i],id = "groupVAR", dataset)))
   icclistt <- round(icclistt[which(icclistt$Var=="groupVAR"),'ICC'],2)
  # icclistt <- format(round(icclistt,2), nsmall = 2)
   y <- rbind(y, icclistt)

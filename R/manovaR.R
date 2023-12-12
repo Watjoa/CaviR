@@ -16,6 +16,9 @@
 #' @importFrom multcomp cld
 #' @importFrom dplyr bind_rows
 
+data <- dftot[1:500,c('gender_w',"depression","anxiety")]
+tukey <- TRUE
+sign <- 0.05
 manovaR<- function(data,tukey = FALSE,sign = 0.05) {
 
   dataset <- as.data.frame(data)
@@ -100,7 +103,7 @@ manovaR<- function(data,tukey = FALSE,sign = 0.05) {
   fvalue[which(fvalue$`p-value`<.001),'p-value'] <- '<.001'
   colnames(fvalue) <- c('F-value','p-value', ' ')
 
-  etasq <- lapply(models, suppressWarnings(effectsize::eta_squared))
+  etasq <- lapply(models, suppressPackageStartupMessages(suppressMessages(suppressMessages(effectsize::eta_squared))))
   anovatabbetasq <- matrix(unlist(etasq), nrow=length(etasq), byrow=T)
   fvalueetasq <- as.numeric(anovatabbetasq[,2])
 
