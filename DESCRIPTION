@@ -26,6 +26,7 @@ Imports:
     flextable,
     ggeffects,
     ggplot2,
+    effects,
     lmerTest,
     performance,
     ggthemes,
