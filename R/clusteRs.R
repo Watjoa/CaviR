@@ -72,7 +72,7 @@ clusteRs <- function(dataset,range=10){
             km.algorithm = "Hartigan-Wong")$tot.withinss
   }
   # Compute and plot wss for k = 1 to k = 15
-  k.values <- 1:range
+  k.values <- 2:range
 
   # extract wss for 2-15 clusters
   wss_values <- purrr::map_dbl(k.values, wss)
@@ -117,7 +117,7 @@ clusteRs <- function(dataset,range=10){
     ggplot2::labs(subtitle = "Silhouette coefficients by cases" ) +
     ggplot2::xlab("Cases")
 
-  minnumber <- 1
+  minnumber <- 2
   maxnumber <- range
   dataset <- dff
 
@@ -164,7 +164,7 @@ clusteRs <- function(dataset,range=10){
 
 
   # Compute and plot wss for k = 2 to k = 15
-  k.values <- 1:range
+  k.values <- 2:range
 
   # extract avg silhouette for 2-15 clusters
   avg_sil_values <- purrr::map_dbl(k.values, avg_sil)
@@ -181,7 +181,7 @@ clusteRs <- function(dataset,range=10){
       axis.title.x = ggplot2::element_blank(),
       plot.caption = ggplot2::element_text(color = "black")
     )+
-    ggplot2::scale_x_continuous(name="K clusters", breaks=c(1:range))+
+    ggplot2::scale_x_continuous(name="K clusters", breaks=c(2:range))+
     ggplot2::theme_minimal()+
     ggplot2::ylab("Average Silhouettes")+
     ggplot2::labs(subtitle = "Average silhouette method")
@@ -2562,7 +2562,7 @@ clusteRs <- function(dataset,range=10){
   }
 
   otherind <- NbClustadapted(dff, distance = "euclidean",
-                      min.nc = 1, max.nc = range,
+                      min.nc = 2, max.nc = range,
                       method = "ward.D2", index ="all")
 
 
@@ -2585,7 +2585,7 @@ clusteRs <- function(dataset,range=10){
     ggplot2::theme_minimal()+
     ggplot2::ylab("Frequency of indices")+
     ggplot2::scale_y_continuous(breaks = seq(0, max(summ.bestnc$Frequency), by = 1))+
-    ggplot2::scale_x_continuous(name="Clusters", breaks=c(1:range))+
+    ggplot2::scale_x_continuous(name="Clusters", breaks=c(0:range))+
     ggplot2::xlab("Clusters")+
     ggplot2::ggtitle('Summary frequency 30 indices')
 
