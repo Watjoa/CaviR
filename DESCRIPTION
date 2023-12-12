@@ -17,6 +17,7 @@ Depends:
     stats,
     cluster,
     purrr,
+    pwr,
     rstatix,
     NbClust,
     cowplot,
@@ -45,3 +46,5 @@ NeedsCompilation: no
 Maintainer: Joachim Waterschoot <joachim.waterschoot@ugent.be>
 Repository: CRAN
 Config/testthat/edition: 3
+Suggests: 
+    testthat (>= 3.0.0)
