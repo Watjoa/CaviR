@@ -16,9 +16,6 @@
 #' @importFrom multcomp cld
 #' @importFrom dplyr bind_rows
 
-data <- dftot[1:500,c('gender_w',"depression","anxiety")]
-tukey <- TRUE
-sign <- 0.05
 manovaR<- function(data,tukey = FALSE,sign = 0.05) {
 
   dataset <- as.data.frame(data)
