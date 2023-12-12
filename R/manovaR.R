@@ -19,8 +19,7 @@
 
 manovaR<- function(data,tukey = FALSE, stand=TRUE,sign = 0.05) {
 
-
-  dataset <- as.data.frame(data)
+ dataset <- as.data.frame(data)
 
   group <- colnames(dataset)[1]
   names(dataset)[names(dataset) == group] <- 'groupVAR'
@@ -59,7 +58,7 @@ manovaR<- function(data,tukey = FALSE, stand=TRUE,sign = 0.05) {
 
     descriptives <- list()
 
-
+i <- 1
     for(i in 1:length(models)) {
       mod_means_contr <- emmeans::emmeans(object = models[[i]],
                                           pairwise ~ groupVAR,
@@ -76,6 +75,7 @@ manovaR<- function(data,tukey = FALSE, stand=TRUE,sign = 0.05) {
                   table34 <- table3[,c('group1','mean')]
                   table34$mean <- format(round(table34$mean,2), nsmall = 2)
                   table35 <- data.frame(split(c(table34$mean),table34$group1))
+                  colnames(table35) <- table34$group1
                   table35<-table35[names(means)]
                   means <- table35
                 }else if (stand==TRUE){
@@ -87,6 +87,7 @@ manovaR<- function(data,tukey = FALSE, stand=TRUE,sign = 0.05) {
                   table34$sd <- format(round(table34$sd,2), nsmall = 2)
                   table34$comb <- paste(table34$mean,' (±',table34$sd,')',sep="")
                   table35 <- data.frame(split(c(table34$comb),table34$group1))
+                  colnames(table35) <- table34$group1
                   table35<-table35[names(means)]
                   means <- table35
                 }
