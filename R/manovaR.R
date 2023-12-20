@@ -8,7 +8,7 @@
 #' @param sign significance level of multi comparison
 #' @return A html correlation matrix with significance stars, Note and descriptive statistics
 #' @export
-#' @importFrom stats anova lm
+#' @importFrom stats anova lm reshape
 #' @importFrom emmeans emmeans
 #' @importFrom psych describeBy cohen.d
 #' @importFrom flextable flextable footnote valign autofit bold as_paragraph align_text_col align
@@ -58,7 +58,7 @@ manovaR<- function(data,tukey = FALSE, stand=TRUE,sign = 0.05) {
 
     descriptives <- list()
 
-i <- 1
+
     for(i in 1:length(models)) {
       mod_means_contr <- emmeans::emmeans(object = models[[i]],
                                           pairwise ~ groupVAR,
@@ -74,10 +74,17 @@ i <- 1
                                               mat=TRUE,type=3,digits=2)
                   table34 <- table3[,c('group1','mean')]
                   table34$mean <- format(round(table34$mean,2), nsmall = 2)
-                  table35 <- data.frame(split(c(table34$mean),table34$group1))
+                  table34$ID <- 1
+                  table35 <- stats::reshape(table34,
+                                    idvar = "ID",
+                                    timevar = "group1",
+                                    direction = "wide")
+                  table35 <- table35[,-which(colnames(table35)=="ID")]
                   colnames(table35) <- table34$group1
-                  table35<-table35[names(means)]
+                  rownames(table35) <- NULL
+                  table35 <- table35[,names(means)]
                   means <- table35
+
                 }else if (stand==TRUE){
                   table3 <- psych::describeBy(dfmanova[,i],
                                               group=dataset$groupVAR,
@@ -86,9 +93,16 @@ i <- 1
                   table34$mean <- format(round(table34$mean,2), nsmall = 2)
                   table34$sd <- format(round(table34$sd,2), nsmall = 2)
                   table34$comb <- paste(table34$mean,' (±',table34$sd,')',sep="")
-                  table35 <- data.frame(split(c(table34$comb),table34$group1))
+
+                  table34$ID <- 1
+                  table35 <- stats::reshape(table34[,c('ID','group1','comb')],
+                                            idvar = "ID",
+                                            timevar = "group1",
+                                            direction = "wide")
+                  table35 <- table35[,-which(colnames(table35)=="ID")]
                   colnames(table35) <- table34$group1
-                  table35<-table35[names(means)]
+                  rownames(table35) <- NULL
+                  table35<-table35[,names(means)]
                   means <- table35
                 }
 
@@ -116,27 +130,45 @@ i <- 1
 
   }else if (tukey==TRUE & length(levels(dataset$groupVAR))<3){
 
-    table3 <- psych::describeBy(dfmanova,
-                                group=dataset$groupVAR,
-                                mat=TRUE,type=3,digits=2)
+    descriptives <- list()
 
     if(stand==FALSE){
-      table34 <- table3[,c('group1','mean')]
-      table34$mean <- format(round(table34$mean,2), nsmall = 2)
-      table35 <- data.frame(split(c(table34$mean),table34$group1))
+
+      tableagg <- aggregate(dfmanova, by=list(group1=dataset$groupVAR), mean,na.rm=TRUE)
+      table3 <- as.data.frame(t(tableagg[,-1]))
+      colnames(table3) <- tableagg$group1
+      table3 <- round(table3,2)
 
     }else if (stand==TRUE){
-      table34 <- table3[,c('group1','mean','sd')]
-      table34$mean <- format(round(table34$mean,2), nsmall = 2)
-      table34$sd <- format(round(table34$sd,2), nsmall = 2)
-      table34$comb <- paste(table34$mean,' (±',table34$sd,')',sep="")
-      table35 <- data.frame(split(c(table34$comb),table34$group1))
 
+
+      for(i in 1:length(names(dfmanova))) {
+
+        table3 <- psych::describeBy(dfmanova[,i],
+                                    group=dataset$groupVAR,
+                                    mat=TRUE,type=3,digits=2)
+        table34 <- table3[,c('group1','mean','sd')]
+        table34$mean <- format(round(table34$mean,2), nsmall = 2)
+        table34$sd <- format(round(table34$sd,2), nsmall = 2)
+        table34$comb <- paste(table34$mean,' (±',table34$sd,')',sep="")
+
+        table34$ID <- 1
+        table35 <- stats::reshape(table34[,c('ID','group1','comb')],
+                                  idvar = "ID",
+                                  timevar = "group1",
+                                  direction = "wide")
+        table35 <- table35[,-which(colnames(table35)=="ID")]
+        colnames(table35) <- table34$group1
+        rownames(table35) <- NULL
+        table35<-table35[,names(means)]
+        descriptives[[i]] <- table35
     }
 
-    colnames(table35) <- levels(as.factor(table34$group1))
-    rownames(table35) <- names(dfmanova)
+    descriptives <- dplyr::bind_rows(descriptives)
+    rownames(descriptives) <- names(dfmanova)
+    table3 <- descriptives
     print('Grouping variable has only 2 levels. Tukey not applicable')
+    }
   }
 
   anovatab <- lapply(models, anova)

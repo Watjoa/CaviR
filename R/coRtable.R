@@ -47,6 +47,8 @@ coRtable<- function(dataset) { # input is a dataset (x) that includes a grouping
   Rnew <- as.data.frame(cbind(rownames(Rnew),Rnew))
   names(Rnew)[1] <- ' '
   Rnew <- flextable::flextable(Rnew)
+  Rnew <- flextable::align_text_col(Rnew,align = "center")
+  Rnew <- flextable::align(Rnew,j=1,align = "left")
   info <- paste('Note. *** p <.001, ** p <. 01, * p < .05')
   Rnew <- flextable::add_footer_lines(Rnew, info)
   Rnew <- flextable::theme_zebra(Rnew)

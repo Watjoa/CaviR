@@ -22,7 +22,10 @@
 #' @importFrom lme4 fixef
 #' @importFrom dplyr between
 
-inteRplot <- function(model,pred,mod,outcome = 'outcome',xaxis = 'predictor',moderator = 'moderator',miny = 1,maxy = 5,xlabels=c('Low','High')) { # input is a dataset (x) that includes a grouping variable (group)
+inteRplot <- function(model,pred,mod,outcome = 'outcome',
+                      xaxis = 'predictor',
+                      moderator = 'moderator',miny = 1,maxy = 5,
+                      xlabels=c('Low','High')) { # input is a dataset (x) that includes a grouping variable (group)
 
   model <- model
   pred <- pred
