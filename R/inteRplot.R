@@ -13,7 +13,7 @@
 #' @param xlabels a vector of your variables
 #' @return interaction figure
 #' @export
-#' @importFrom ggeffects ggeffect
+#' @importFrom ggeffects ggpredict
 #' @importFrom ggplot2 ggplot aes element_text
 #' @importFrom ggthemes theme_few
 #' @importFrom data.table as.data.table
@@ -93,7 +93,6 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
     colnames(testSlopes) <- c(deparse(modx), "slope", "Std. Error", "t value", "Pr(>|t|)")
     hey <- round(testSlopes,4)
     heyy <- data.table::as.data.table(hey,keep.rownames=TRUE)
-    heyy
 
 
     # if (is.factor(modxVar)) {
@@ -336,7 +335,7 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
   linesvalues <- paste(mod,'[',paste(lines,sep="", collapse=","),']',sep="")
   predvalues <- paste(pred,'[',paste(linespred,sep="", collapse=","),']',sep="")
 
-  ggpredictions_ols3 = data.frame(ggeffects::ggeffect(model,
+  ggpredictions_ols3 = data.frame(ggeffects::ggpredict(model,
                                            c(predvalues,
                                              linesvalues)))
   ggpredictions_ols3$group <- as.character(ggpredictions_ols3$group)
