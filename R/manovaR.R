@@ -144,6 +144,14 @@ manovaR<- function(data,tukey = FALSE, stand=TRUE,sign = 0.05) {
 
       for(i in 1:length(names(dfmanova))) {
 
+        mod_means_contr <- emmeans::emmeans(object = models[[i]],
+                                            pairwise ~ groupVAR,
+                                            adjust = "tukey")
+        means <- as.data.frame(mod_means_contr$emmeans)
+        names <- means$groupVAR
+        means <- as.data.frame(t(round(means$emmean,2)))
+        colnames(means) <- names
+
         table3 <- psych::describeBy(dfmanova[,i],
                                     group=dataset$groupVAR,
                                     mat=TRUE,type=3,digits=2)
