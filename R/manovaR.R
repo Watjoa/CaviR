@@ -8,7 +8,7 @@
 #' @param sign significance level of multi comparison
 #' @return A html correlation matrix with significance stars, Note and descriptive statistics
 #' @export
-#' @importFrom stats anova lm reshape
+#' @importFrom stats anova lm reshape aggregate
 #' @importFrom emmeans emmeans
 #' @importFrom psych describeBy cohen.d
 #' @importFrom flextable flextable footnote valign autofit bold as_paragraph align_text_col align
@@ -134,7 +134,7 @@ manovaR<- function(data,tukey = FALSE, stand=TRUE,sign = 0.05) {
 
     if(stand==FALSE){
 
-      tableagg <- aggregate(dfmanova, by=list(group1=dataset$groupVAR), mean,na.rm=TRUE)
+      tableagg <- stats::aggregate(dfmanova, by=list(group1=dataset$groupVAR), mean,na.rm=TRUE)
       table3 <- as.data.frame(t(tableagg[,-1]))
       colnames(table3) <- tableagg$group1
       table3 <- round(table3,2)

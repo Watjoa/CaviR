@@ -5,10 +5,12 @@
 #' @param dataset Your dataset with the variable in order you want to present them
 #' @return A html correlation matrix with significance stars, Note and descriptive statistics
 #' @export
-#' @importFrom multilevelTools iccMixed
 #' @importFrom psych statsBy describe
 #' @importFrom papaja printnum
+#' @importFrom performance icc
+#' @importFrom lme4 lmer
 #' @importFrom flextable flextable add_footer_lines theme_zebra autofit
+
 
 multicoR<- function(dataset) { # input is a dataset (x) that includes a grouping variable (group)
 
@@ -46,27 +48,45 @@ multicoR<- function(dataset) { # input is a dataset (x) that includes a grouping
   rnbtw  <- papaja::printnum(sat.stats.between, gt1 = FALSE, digits = 2)  #round, drop leading 0 - Thanks CRSH!
   rnwht  <- papaja::printnum(sat.stats.within, gt1 = FALSE, digits = 2)  #round, drop leading 0 - Thanks CRSH!
 
+  vars <- colnames(corr)[1:(length(corr)-1)]
+  y <- NULL
+
+for(i in 1:length(vars)){
+    dataset <- as.data.frame(dataset)
+    modeldata <- dataset[,c('groupVAR',vars[i])]
+    colnames(modeldata) <- c('groupVAR','outcome')
+    modeldata$outcome <- scale(modeldata$outcome)
+    modeldata <- na.omit(modeldata)
+    tryCatch({
+      iccmodel <- suppressWarnings(lme4::lmer(outcome ~ 1 + (1|groupVAR), data=modeldata))
+      icclistt <- performance::icc(iccmodel)
+      icclistt <- round(icclistt$ICC_adjusted,2)
+    }, error=function(e){icclistt <- NULL})
+    y <- rbind(y, icclistt)
+  }
+
+  y <- as.data.frame(y)
+  colnames(y) <- 'ICC'
+  rownames(y) <- vars
+
   Rnewbtw <- matrix(paste(rnbtw, mystarspbg, sep=""), ncol=ncol(rnbtw))
   Rnewwth <- matrix(paste(rnwht, mystarspwg, sep=""), ncol=ncol(rnwht))
   Rnew <- matrix(nrow = nrow(Rnewbtw), ncol = ncol(Rnewbtw))
 
   #remove 1.0 correlations from diagonal  and set the strings
   diag(Rnewbtw) <- ""
-  Rnew[lower.tri(Rnew)] <- Rnewbtw[lower.tri(Rnewbtw)] #between-level correlations above diagonal
+
+  if(length(which(y$ICC==1.00))>0){
+    Rnewwth[,which(y$ICC==1.00)] <- NA
+  } else if(length(which(y$ICC==0.00))>0) {
+    Rnewbtw[which(y$ICC==0.00),] <- NA
+  } else {y <- y}
+
   Rnew[upper.tri(Rnew)] <- Rnewwth[upper.tri(Rnewwth)] #between-level correlations above diagonal
+  Rnew[lower.tri(Rnew)] <- Rnewbtw[lower.tri(Rnewbtw)] #within-level correlations above diagonal
 
   rownames(Rnew) <- paste(1:ncol(rnbtw), ". ",colnames(rnbtw), sep="") #Row names are numbers and variable names
   colnames(Rnew) <- paste(1:ncol(rnbtw), ".", sep="") #Column names are just
-
-  vars <- colnames(corr)[1:(length(corr)-1)]
-  y <- NULL
-  for(i in 1:length(vars)){
-  dataset <- as.data.frame(dataset)
-  icclistt <- suppressMessages(suppressWarnings(multilevelTools::iccMixed(dv = vars[i],id = "groupVAR", dataset)))
-  icclistt <- round(icclistt[which(icclistt$Var=="groupVAR"),'ICC'],2)
- # icclistt <- format(round(icclistt,2), nsmall = 2)
-  y <- rbind(y, icclistt)
-  }
 
   Rnew <- suppressWarnings(cbind(round(psych::describe(corr)$mean,2),
                                  round(psych::describe(corr)$sd,2),
