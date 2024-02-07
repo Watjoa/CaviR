@@ -205,7 +205,7 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
 
   myPaletteHigh <- grDevices::colorRampPalette((RColorBrewer::brewer.pal(9, "Blues")))
   heyy[which(heyy$parts=='high'),'color'] <-  myPaletteHigh(length(heyy[which(heyy$parts=='high'),'parts']))
-  myPaletteLow <- cgrDevices::olorRampPalette(rev(RColorBrewer::brewer.pal(9, "YlOrRd")))
+  myPaletteLow <- grDevices::colorRampPalette(rev(RColorBrewer::brewer.pal(9, "YlOrRd")))
   heyy[which(heyy$parts=='low'),'color'] <-  myPaletteLow(length(heyy[which(heyy$parts=='low'),'parts']))
 
   heyy[which(heyy$`Pr(>|t|)`>0.05),'color'] <- "lightgrey"
