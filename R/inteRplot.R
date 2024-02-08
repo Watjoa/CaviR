@@ -17,13 +17,12 @@
 #' @importFrom lme4 fixef
 #' @importFrom data.table as.data.table
 #' @importFrom ggeffects ggpredict
-#' @importFrom ggplot2 ggplot geom_line geom_point aes element_text guides scale_x_continuous coord_cartesian labs scale_color_manual theme
+#' @importFrom ggplot2 ggplot aes geom_line geom_point aes element_text guides scale_x_continuous coord_cartesian labs scale_color_manual theme
 #' @importFrom ggthemes theme_few
 #' @importFrom gtools stars.pval
 #' @importFrom dplyr between
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal
-
 
 inteRplot <- function(model,pred,mod,outcome = 'outcome',
                       xaxis = 'predictor',
@@ -51,8 +50,7 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
   interactionsIn <- relevantInteractions[which(relevantInteractions %in% ivs)]
 
   if (!any(relevantInteractions %in% ivs)) {
-    cat("I'm sorry, there is no interaction to be displayed")
-    return(NULL)
+    cat("I'm sorry, it seems there is no significant interaction to be calculated or to be displayed")
   }
 
 
@@ -106,7 +104,7 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
       c(V[pred, pred], V[names(bmodx), names(bmodx)], V[pred, names(bmodx)])
 
     tbsimple <- bsimple/sqrt(covbsimple)
-    dfresidual <-mean(unique(summary(model)$coefficient[,3]))
+    dfresidual <- mean(unique(summary(model)$coefficient[,3]))
     dfresidual <- as.integer(dfresidual)
     testSlopes <- data.frame( modx = modxVals, b = bsimple,
                               se = sqrt(covbsimple), t = tbsimple,
@@ -299,9 +297,9 @@ if('Inf' %in% intervaljn == TRUE){
                       sep="\n")
     )+
     ggplot2::geom_line(data = ggpredictions_ols3BIG,
-              aes(x = first, y = values,linetype=groupname),color="black")+
+              ggplot2::aes(x = first, y = values,linetype=groupname),color="black")+
     ggplot2::geom_point(data = ggpredictions_ols3BIG,
-               aes(x = first, y = values),color="black",size=0.5)+
+                        ggplot2::aes(x = first, y = values),color="black",size=0.5)+
     ggplot2::scale_linetype_manual(moderator,
                           labels= c(numbers$labels),
                           values = c(numbers$lines))
@@ -331,9 +329,9 @@ if('Inf' %in% intervaljn == TRUE){
                       sep="\n")
     )+
     ggplot2::geom_line(data = ggpredictions_ols3BIG,
-              aes(x = first, y = values,linetype=groupname),color="black")+
+                       ggplot2::aes(x = first, y = values,linetype=groupname),color="black")+
     ggplot2::geom_point(data = ggpredictions_ols3BIG,
-               aes(x = first, y = values),color="black",size=0.5)+
+                        ggplot2::aes(x = first, y = values),color="black",size=0.5)+
     ggplot2::scale_linetype_manual(moderator,
                           labels= c(numbers$labels),
                           values = c(numbers$lines))
