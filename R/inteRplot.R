@@ -24,6 +24,7 @@
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal
 
+
 inteRplot <- function(model,pred,mod,outcome = 'outcome',
                       xaxis = 'predictor',
                       moderator = 'moderator',miny = 1,maxy = 5,
@@ -79,8 +80,7 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
       c(V[pred, pred], V[names(bmodx), names(bmodx)], V[pred, names(bmodx)])
 
     tbsimple <- bsimple/sqrt(covbsimple)
-    dfresidual <- mean(unique(summary(model)$coefficient[,3]))
-    dfresidual <- as.integer(dfresidual)
+    dfresidual <- df.residual(model)
     testSlopes <- data.frame( modx = modxVals, b = bsimple,
                               se = sqrt(covbsimple), t = tbsimple,
                               p = 2 * stats::pt(abs(tbsimple),
@@ -98,14 +98,13 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
     bmodx <- NULL
     bpred <- bs[pred]
     bmodx <- bs[interactionsIn]
-
     bsimple <- bpred + bmodx * modxVals
+
     covbsimple <- cbind(1, modxVals^2, 2 * modxVals) %*%
       c(V[pred, pred], V[names(bmodx), names(bmodx)], V[pred, names(bmodx)])
 
     tbsimple <- bsimple/sqrt(covbsimple)
-    dfresidual <- mean(unique(summary(model)$coefficient[,3]))
-    dfresidual <- as.integer(dfresidual)
+    dfresidual <- df.residual(model)
     testSlopes <- data.frame( modx = modxVals, b = bsimple,
                               se = sqrt(covbsimple), t = tbsimple,
                               p = 2 * stats::pt(abs(tbsimple),
@@ -115,6 +114,7 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
     heyy <- data.table::as.data.table(hey,keep.rownames=TRUE)
     simslopes <- as.data.frame(heyy)
   }
+
 
 
   # min, max, sd waarden
@@ -156,8 +156,7 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
       c(V[pred, pred], V[names(bmodx), names(bmodx)], V[pred, names(bmodx)])
 
     tbsimple <- bsimple/sqrt(covbsimple)
-    dfresidual <-mean(unique(summary(model)$coefficient[,3]))
-    dfresidual <- as.integer(dfresidual)
+    dfresidual <- df.residual(model)
     testSlopes <- data.frame( modx = modxVals, b = bsimple,
                               se = sqrt(covbsimple), t = tbsimple,
                               p = 2 * stats::pt(abs(tbsimple),
@@ -181,8 +180,7 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
       c(V[pred, pred], V[names(bmodx), names(bmodx)], V[pred, names(bmodx)])
 
     tbsimple <- bsimple/sqrt(covbsimple)
-    dfresidual <-mean(unique(summary(model)$coefficient[,3]))
-    dfresidual <- as.integer(dfresidual)
+    dfresidual <- df.residual(model)
     testSlopes <- data.frame( modx = modxVals, b = bsimple,
                               se = sqrt(covbsimple), t = tbsimple,
                               p = 2 * stats::pt(abs(tbsimple),
