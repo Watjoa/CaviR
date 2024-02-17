@@ -11,24 +11,39 @@
 #' @param miny a vector of your variables
 #' @param maxy a vector of your variables
 #' @param xlabels a vector of your variables
+#' @param sd a vector of your variables
+#' @param densitylegend a vector of your variables
 #' @return interaction figure
 #' @export
 #' @importFrom terms sd mean coef vcov
 #' @importFrom lme4 fixef
 #' @importFrom data.table as.data.table
 #' @importFrom ggeffects ggpredict
-#' @importFrom ggplot2 ggplot aes geom_line geom_point aes element_text guides scale_x_continuous coord_cartesian labs scale_color_manual theme
+#' @importFrom ggplot2 ggplot scale_alpha scale_size aes geom_line geom_point aes element_text guides scale_x_continuous coord_cartesian labs scale_color_manual theme
 #' @importFrom ggthemes theme_few
 #' @importFrom gtools stars.pval
 #' @importFrom dplyr between
 #' @importFrom grDevices colorRampPalette
 #' @importFrom RColorBrewer brewer.pal
+#' @importFrom stats df.residual terms sd coef vcov pt fivenum
+#
+# model <- model
+#           pred = 'ZHIPBEA6'
+#           mod = 'ZPSOvrMM6'
+#           outcome = 'Disinhibition'
+#           xaxis = 'Benevolence'
+#           moderator = 'Overreactivity'
+#           miny = 1.5
+#           maxy = 2.5
+#           sd = 2
+#           densitylegend = TRUE
+#           xlabels=c('Low','High')
 
 
 inteRplot <- function(model,pred,mod,outcome = 'outcome',
                       xaxis = 'predictor',
                       moderator = 'moderator',miny = 1,maxy = 5,
-                      xlabels=c('Low','High')) { # input is a dataset (x) that includes a grouping variable (group)
+                      xlabels=c('Low','High'), sd = 1,densitylegend = TRUE) { # input is a dataset (x) that includes a grouping variable (group)
 
   model <- model
   pred <- pred
@@ -58,7 +73,7 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
 
   # BIG LINES
   meanmodx <- mean(data[,modx],na.rm=TRUE)
-  sdmodx <- stats::sd(data[,modx],na.rm=TRUE)
+  sdmodx <- (stats::sd(data[,modx],na.rm=TRUE)*sd)
   highmodx <- meanmodx+sdmodx
   lowmodx <- meanmodx-sdmodx
   names <- c('(m-sd)','(m)','(m+sd)')
@@ -122,17 +137,17 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
   minslope <- paste('minimum: ',format(round(min,2), nsmall = 2),sep="")
   max <- max(data[,mod],na.rm=TRUE)
   maxslope <- paste('maxmimum: ',format(round(max,2), nsmall = 2),sep="")
-  minsd <- mean(data[,mod],na.rm=TRUE)-stats::sd(data[,mod],na.rm=TRUE)
-  maxsd <- mean(data[,mod],na.rm=TRUE)+stats::sd(data[,mod],na.rm=TRUE)
+  minsd <- mean(data[,mod],na.rm=TRUE)-(stats::sd(data[,mod],na.rm=TRUE)*sd)
+  maxsd <- mean(data[,mod],na.rm=TRUE)+(stats::sd(data[,mod],na.rm=TRUE)*sd)
   meansd <- mean(data[,mod],na.rm=TRUE)
 
   simslopes$est <- format(round(simslopes$slope,2), nsmall = 2)
   simslopes$stars <- gtools::stars.pval(simslopes$`Pr(>|t|)`)
-  lowslope <- paste('-1 SD (',simslopes[which(simslopes[,2]==min(simslopes[,2])),'est'],
+  lowslope <- paste('-',sd,' SD (',simslopes[which(simslopes[,2]==min(simslopes[,2])),'est'],
                     simslopes[which(simslopes[,2]==min(simslopes[,2])),'stars'],')',sep="")
   lowslope <- sub('0', '', lowslope)
 
-  highslope <- paste('+1 SD (',simslopes[which(simslopes[,2]==max(simslopes[,2])),'est'],
+  highslope <- paste('+',sd,' SD (',simslopes[which(simslopes[,2]==max(simslopes[,2])),'est'],
                      simslopes[which(simslopes[,2]==max(simslopes[,2])),'stars'],')',sep="")
   highslope <- sub('0', '', highslope)
 
@@ -141,7 +156,23 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
   meanslope <- sub('0', '', meanslope)
 
   # SMALL LINES
-  modxVals <- seq(min,max,length.out=1000)
+
+
+  hist_data <- graphics::hist(data[,mod],breaks=1000,plot=FALSE)
+  densmod <- data.frame(
+    x = hist_data$breaks[-length(hist_data$breaks)],  # Exclude last break
+    y = (hist_data$counts/sum(hist_data$counts))*100
+  )
+  if(length(which(densmod$x<min(data[,mod])))>0){
+  densmod <- densmod[-which(densmod$x<min(data[,mod])),]
+  } else {densmod <- densmod}
+
+  if(length(which(densmod$x>max(data[,mod])))>0){
+    densmod <- densmod[-which(densmod$x>max(data[,mod])),]
+  } else {densmod <- densmod}
+
+
+  modxVals <- densmod$x
   bs <- stats::coef(model)
   V <- stats::vcov(model)
 
@@ -156,7 +187,7 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
       c(V[pred, pred], V[names(bmodx), names(bmodx)], V[pred, names(bmodx)])
 
     tbsimple <- bsimple/sqrt(covbsimple)
-    dfresidual <- df.residual(model)
+    dfresidual <- stats::df.residual(model)
     testSlopes <- data.frame( modx = modxVals, b = bsimple,
                               se = sqrt(covbsimple), t = tbsimple,
                               p = 2 * stats::pt(abs(tbsimple),
@@ -191,7 +222,7 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
     heyy <- as.data.frame(heyy)
   }
 
-  heyy <- heyy[order(heyy[,2],decreasing=FALSE),]
+  heyy$density <- densmod$y
   meanmod <- mean(data[,mod],na.rm=TRUE)
   meanpoint <- which(abs(heyy[,2] - meanmod) == min(abs(heyy[,2] - meanmod)))
   minpoint <- which(heyy[,2]==min(heyy[,2]))
@@ -206,8 +237,8 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
 
   heyy[which(heyy$`Pr(>|t|)`>0.05),'color'] <- "lightgrey"
 
-  minsdpred <- mean(data[,pred],na.rm=TRUE)-stats::sd(data[,pred],na.rm=TRUE)
-  maxsdpred <- mean(data[,pred],na.rm=TRUE)+stats::sd(data[,pred],na.rm=TRUE)
+  minsdpred <- mean(data[,pred],na.rm=TRUE)-(stats::sd(data[,pred],na.rm=TRUE))
+  maxsdpred <- mean(data[,pred],na.rm=TRUE)+(stats::sd(data[,pred],na.rm=TRUE))
   meanpred <- mean(data[,pred],na.rm=TRUE)
   linespred <- c(minsdpred,maxsdpred)
 
@@ -240,18 +271,19 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
   levels(ggpredictions_ols3$predname) <- c('low','high')
 
   ggpredictions_ols3$color <- heyy$color[match(ggpredictions_ols3$group,heyy[,2])]
+  ggpredictions_ols3$dens <- heyy$density[match(ggpredictions_ols3$group,heyy[,2])]
 
   numbers <- data.frame(numbers = c(minsd,meansd,maxsd),
                         labels = c(lowslope,meanslope,highslope),
-                        labelss = c( '-1 SD','M','+1 SD'),
+                        labelss = c( paste('-',sd,' SD',sep=""),'M',paste('+',sd,' SD',sep="")),
                         lines = c('dotted','dashed','solid'))
 
   numbers <- numbers[order(numbers$numbers),]
   linesbig <- as.numeric(numbers$numbers)
   linesbig <- round(linesbig,2)
 
-  minsdpred <- mean(data[,pred],na.rm=TRUE)-stats::sd(data[,pred],na.rm=TRUE)
-  maxsdpred <- mean(data[,pred],na.rm=TRUE)+stats::sd(data[,pred],na.rm=TRUE)
+  minsdpred <- mean(data[,pred],na.rm=TRUE)-(stats::sd(data[,pred],na.rm=TRUE))
+  maxsdpred <- mean(data[,pred],na.rm=TRUE)+(stats::sd(data[,pred],na.rm=TRUE))
   linespred <- c(minsdpred,maxsdpred)
 
   linesbigvalues <- paste(mod,'[',paste(linesbig,sep="", collapse=","),']',sep="")
@@ -268,46 +300,81 @@ inteRplot <- function(model,pred,mod,outcome = 'outcome',
   levels(ggpredictions_ols3BIG$predname) <- c('low','high')
   colnames(ggpredictions_ols3BIG)[1:2] <- c('first','values')
 
+  ggpredictions_ols3[which(ggpredictions_ols3$predname=="low"),'pointsposition'] <- ggpredictions_ols3[which(ggpredictions_ols3$predname=="low"),'x']-0.15
+  ggpredictions_ols3[which(ggpredictions_ols3$predname=="high"),'pointsposition'] <- ggpredictions_ols3[which(ggpredictions_ols3$predname=="high"),'x']+0.15
+
+  ggpredictions_ols3[which(ggpredictions_ols3$dens<0.01),'dens'] <- NA
+
+
+
+
+  lowestdens <- sum(ggpredictions_ols3[which(ggpredictions_ols3$group<summary(data[,mod])[2]),'dens'],na.rm=TRUE)/2
+
+  lowerdens <- sum(ggpredictions_ols3[which(ggpredictions_ols3$group>=summary(data[,mod])[2]
+                                        & ggpredictions_ols3$group<summary(data[,mod])[3]),'dens'],na.rm=TRUE)/2
+
+  highdens <- sum(ggpredictions_ols3[which(ggpredictions_ols3$group>=summary(data[,mod])[3]
+                                       & ggpredictions_ols3$group<summary(data[,mod])[5]),'dens'],na.rm=TRUE)/2
+
+  highestdens <- sum(ggpredictions_ols3[which(ggpredictions_ols3$group>summary(data[,mod])[5]),'dens'],na.rm=TRUE)/2
+
+  sum <- lowestdens + lowerdens + highdens + highestdens
+  lowestdens <- round((lowestdens*(100/sum)),2)
+  lowerdens <- round((lowerdens*(100/sum)),2)
+  highdens <- round((highdens*(100/sum)),2)
+  highestdens <- round((highestdens*(100/sum)),2)
+
+
+  lowestdensSD <- sum(ggpredictions_ols3[which(ggpredictions_ols3$group<minsd),'dens'],na.rm=TRUE)/2
+
+  lowerdensSD <- sum(ggpredictions_ols3[which(ggpredictions_ols3$group>=minsd
+                                            & ggpredictions_ols3$group<meansd),'dens'],na.rm=TRUE)/2
+
+  highdensSD <- sum(ggpredictions_ols3[which(ggpredictions_ols3$group>=meansd
+                                           & ggpredictions_ols3$group<maxsd),'dens'],na.rm=TRUE)/2
+
+  highestdensSD <- sum(ggpredictions_ols3[which(ggpredictions_ols3$group>maxsd),'dens'],na.rm=TRUE)/2
+
+  sumSD <- lowestdensSD + lowerdensSD + highdensSD + highestdensSD
+  lowestdensSD <- round((lowestdensSD*(100/sum)),2)
+  lowerdensSD <- round((lowerdensSD*(100/sum)),2)
+  highdensSD <- round((highdensSD*(100/sum)),2)
+  highestdensSD <- round((highestdensSD*(100/sum)),2)
+
+
+
+  nonsigndens <- 100-round((sum(ggpredictions_ols3[which(ggpredictions_ols3$color=="lightgrey"),'dens'],na.rm=TRUE)/2)*(100/sum),2)
+
 # including interval
+
+
+  if(densitylegend == TRUE){
+    denslegend <- ggplot2::scale_size(name   = "Density values:",
+                                      breaks = stats::fivenum(ggpredictions_ols3$dens),
+                                      labels =round(stats::fivenum(ggpredictions_ols3$dens),2))
+      # c(
+      #   paste('Min: ',round(stats::fivenum(ggpredictions_ols3$dens),2)[1],sep=""),
+      #   paste('Q1: ',round(stats::fivenum(ggpredictions_ols3$dens),2)[2],sep=""),
+      #   paste('Q2: ',round(stats::fivenum(ggpredictions_ols3$dens),2)[3],sep=""),
+      #   paste('Q3: ',round(stats::fivenum(ggpredictions_ols3$dens),2)[4],sep=""),
+      #   paste('Max: ',round(stats::fivenum(ggpredictions_ols3$dens),2)[5],sep="")
+      #   ))+
+  }else if(densitylegend == FALSE){
+    denslegend <- ggplot2::scale_size(guide = 'none')
+  }
 
 if('Inf' %in% intervaljn == TRUE){
   fig <- ggplot2::ggplot(data = ggpredictions_ols3,ggplot2::aes(x = x,
                                                        y = predicted,
                                                        group = groupname,
                                                        color = groupname)) +
-    ggplot2::geom_line(alpha=0.15)+
-    ggplot2::scale_color_manual("ow",values = heyy$color)+
-    ggthemes::theme_few()+
-    ggplot2::theme(plot.caption = ggplot2::element_text(hjust = 0))+
-    ggplot2::guides(color="none")+
-    # theme(legend.position="none")+
-    ggplot2::scale_x_continuous(breaks=linespred,
-                       labels=xlabels,
-                       expand = c(0.2, 0))+
-    ggplot2::coord_cartesian(ylim=c(miny,maxy))+
-    ggplot2::labs(
-      #tag=moderator,
-      #subtitle = paste(xaxis," by ",moderator," in prediction of ",outcome,sep=""),
-      y = outcome,
-      x = paste(xaxis,'',sep='\n'),
-      caption = paste(paste('Moderator values going from [',round(min,2),', ',round(max,2),']',sep=""),
-                      paste('Slopes are significant for all moderator values',sep=""),
-                      sep="\n")
-    )+
-    ggplot2::geom_line(data = ggpredictions_ols3BIG,
-              ggplot2::aes(x = first, y = values,linetype=groupname),color="black")+
-    ggplot2::geom_point(data = ggpredictions_ols3BIG,
-                        ggplot2::aes(x = first, y = values),color="black",size=0.5)+
-    ggplot2::scale_linetype_manual(moderator,
-                          labels= c(numbers$labels),
-                          values = c(numbers$lines))
+    ggplot2::geom_line(aes(alpha=dens))+
+    ggplot2::scale_alpha(guide = 'none')+
 
-} else {
-  fig <- ggplot2::ggplot(data = ggpredictions_ols3,ggplot2::aes(x = x,
-                                                       y = predicted,
-                                                       group = groupname,
-                                                       color = groupname)) +
-    ggplot2::geom_line(alpha=0.15)+
+    ggplot2::geom_point(aes(x=pointsposition,size=dens),shape = 19,na.rm=TRUE)+
+
+    denslegend+
+
     ggplot2::scale_color_manual("ow",values = heyy$color)+
     ggthemes::theme_few()+
     ggplot2::theme(plot.caption = ggplot2::element_text(hjust = 0))+
@@ -324,6 +391,61 @@ if('Inf' %in% intervaljn == TRUE){
       x = paste(xaxis,'',sep='\n'),
       caption = paste(paste('Moderator values going from [',round(min,2),', ',round(max,2),']',sep=""),
                       paste('Non-significant slopes in moderator going from [',round(lower,2),', ',round(higher,2),']',sep=""),
+                      paste('Slopes not significant for ',nonsigndens,'% of the participants',sep=""),
+                      paste(),
+                      paste('Moderator density:'),
+                      paste('...',lowestdens,'% <Q1, ',lowerdens,'% >Q1 and <Q2, ',
+                            highdens,'% >Q2 and <Q3, ',highestdens,'% >Q3', sept=""),
+                      paste('•',lowestdensSD,'% < ',paste('-',sd,' SD',sep=""),lowerdensSD,'% > ',paste('-',sd,' SD',sep=""),'and <Mean, ',
+                            highdensSD,'% >Mean and < ',paste('+',sd,' SD',sep=""),highestdensSD,'% > ',paste('+',sd,' SD',sep=""), sept=""),
+                      sep="\n")
+    )+
+    ggplot2::geom_line(data = ggpredictions_ols3BIG,
+              ggplot2::aes(x = first, y = values,linetype=groupname),color="black")+
+    ggplot2::geom_point(data = ggpredictions_ols3BIG,
+                        ggplot2::aes(x = first, y = values),color="black",size=0.5)+
+    ggplot2::scale_linetype_manual(moderator,
+                          labels= c(numbers$labels),
+                          values = c(numbers$lines))
+
+} else {
+
+
+  fig <- ggplot2::ggplot(data = ggpredictions_ols3,ggplot2::aes(x = x,
+                                                       y = predicted,
+                                                       group = groupname,
+                                                       color = groupname)) +
+    ggplot2::geom_line(aes(alpha=dens))+
+    ggplot2::scale_alpha(guide = 'none')+
+
+    ggplot2::geom_point(aes(x=pointsposition,size=dens),shape = 19,na.rm=TRUE)+
+
+    denslegend+
+
+
+    ggplot2::scale_color_manual("ow",values = heyy$color)+
+    ggthemes::theme_few()+
+    ggplot2::theme(plot.caption = ggplot2::element_text(hjust = 0))+
+    ggplot2::guides(color="none")+
+    # theme(legend.position="none")+
+    ggplot2::scale_x_continuous(breaks=linespred,
+                       labels=xlabels,
+                       expand = c(0.2, 0))+
+    ggplot2::coord_cartesian(ylim=c(miny,maxy))+
+    ggplot2::labs(
+      #tag=moderator,
+      #subtitle = paste(xaxis," by ",moderator," in prediction of ",outcome,sep=""),
+      y = outcome,
+      x = paste(xaxis,'',sep='\n'),
+      caption = paste(paste('Moderator values: [',round(min,2),', ',round(max,2),']',sep=""),
+                      paste('Non-significant slopes: [',round(lower,2),', ',round(higher,2),']',sep=""),
+                      paste('Slopes significant for ',nonsigndens,'% of the participants',sep=""),
+                      paste(),
+                      paste('Moderator density:'),
+                      paste('•',lowestdens,'% <Q1, ',lowerdens,'% >Q1 and <Q2, ',
+                            highdens,'% >Q2 and <Q3, ',highestdens,'% >Q3', sept=""),
+                      paste('•',lowestdensSD,'% <',paste('-',sd,' SD,',sep=""),lowerdensSD,'% >',paste('-',sd,' SD',sep=""),'and <Mean, ',
+                            highdensSD,'% >Mean and <',paste('+',sd,' SD,',sep=""),highestdensSD,'% >',paste('+',sd,' SD',sep=""), sept=""),
                       sep="\n")
     )+
     ggplot2::geom_line(data = ggpredictions_ols3BIG,
@@ -334,7 +456,6 @@ if('Inf' %in% intervaljn == TRUE){
                           labels= c(numbers$labels),
                           values = c(numbers$lines))
 }
-
   return(fig)
 }
 
